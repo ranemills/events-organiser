@@ -25,9 +25,16 @@
     </div>
 </div>
 <div class="container" ng-show="home.authenticated">
-    Logged in as: <span ng-bind="home.user"></span>
+    Logged in as: <span>{{home.user}}</span>
     <div>
         <button ng-click="home.logout()" class="btn btn-primary">Logout</button>
+    </div>
+    <div>
+        <ul>
+            <li ng-repeat="event in home.events">
+                {{event.id}}: {{event.name}}
+            </li>
+        </ul>
     </div>
 </div>
 </body>
@@ -36,7 +43,7 @@
 <script type="text/javascript">
     angular.module("app", []).controller("home", function ($http, $location) {
         var self = this;
-        $http.get("/api/user").success(function (data) {
+        var userPromise = $http.get("/api/user").success(function (data) {
             self.user = data.userAuthentication.details.name;
             self.authenticated = true;
         }).error(function () {
@@ -53,6 +60,14 @@
                 self.authenticated = false;
             });
         };
+
+        userPromise.then(function() {
+            if(self.authenticated) {
+                $http.get('/api/events').then(function(response) {
+                   self.events =  response.data;
+                });
+            }
+        })
     });
 </script>
 
