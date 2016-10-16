@@ -110,11 +110,11 @@ public class EventsApplication extends WebSecurityConfigurerAdapter {
         @NestedConfigurationProperty
         private ResourceServerProperties resource = new ResourceServerProperties();
 
-        AuthorizationCodeResourceDetails getClient() {
+        public AuthorizationCodeResourceDetails getClient() {
             return client;
         }
 
-        ResourceServerProperties getResource() {
+        public ResourceServerProperties getResource() {
             return resource;
         }
     }
