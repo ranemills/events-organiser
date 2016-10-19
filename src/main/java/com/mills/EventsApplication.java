@@ -13,6 +13,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -33,7 +34,6 @@ import java.util.List;
 
 @SpringBootApplication
 @EnableOAuth2Client
-@EnableNeo4jRepositories
 @Order(6)
 public class EventsApplication extends WebSecurityConfigurerAdapter {
 
@@ -42,15 +42,6 @@ public class EventsApplication extends WebSecurityConfigurerAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(EventsApplication.class, args);
-    }
-
-    @Bean
-    CommandLineRunner insertData(EventRepository eventRepository) {
-        return args -> {
-            for (Integer i = 0; i < 5; i++) {
-                eventRepository.save(new Event(i.toString()));
-            }
-        };
     }
 
     @Override

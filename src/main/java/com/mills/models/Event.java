@@ -10,6 +10,8 @@ public class Event {
 
     private String name;
 
+    private Event() {}
+
     public Event(String name) {
         setName(name);
     }
