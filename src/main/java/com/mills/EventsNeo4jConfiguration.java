@@ -1,9 +1,7 @@
 package com.mills;
 
-import org.neo4j.ogm.config.Configuration;
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -16,7 +14,7 @@ public class EventsNeo4jConfiguration extends Neo4jConfiguration {
 
     @Override
     public SessionFactory getSessionFactory() {
-        return new SessionFactory("com.mills.models");
+        return new SessionFactory("com.mills.models", "BOOT-INF.classes.com.mills.models");
     }
 
 
