@@ -32,13 +32,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Created by ryan on 19/10/16.
- */
-@WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {EventsApplication.class, EventsNeo4jTestConfiguration.class})
 @ActiveProfiles(profiles = "test")
+@WebAppConfiguration
 @WithMockUser
 public class EventsControllerTest {
 
@@ -78,6 +75,15 @@ public class EventsControllerTest {
     }
 
     @Test
+    public void canRetrieveEmptyList()
+        throws Exception
+    {
+        mockMvc.perform(get("/api/events"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
     public void canRetrieveEventWithInvitedPeople()
         throws Exception
     {
@@ -113,7 +119,6 @@ public class EventsControllerTest {
 
 
     @Test
-    @WithMockUser
     public void canInvitePerson()
         throws Exception
     {
@@ -133,4 +138,5 @@ public class EventsControllerTest {
         assertThat(received.getInvitations(), hasSize(1));
         assertThat(received.getInvitations().get(0).getPerson(), equalTo(person));
     }
+
 }
