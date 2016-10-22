@@ -1,62 +1,30 @@
 package com.mills.controllers;
 
-import com.mills.EventsApplication;
-import com.mills.EventsNeo4jTestConfiguration;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mills.entities.EventEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
-import com.mills.repositories.EventRepository;
-import com.mills.repositories.PersonRepository;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
+import static org.apache.coyote.http11.Constants.a;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {EventsApplication.class, EventsNeo4jTestConfiguration.class})
-@ActiveProfiles(profiles = "test")
-@WebAppConfiguration
-@WithMockUser
-public class EventsControllerTest {
-
-    @Autowired
-    private WebApplicationContext _webApplicationContext;
-
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private PersonRepository personRepository;
-
-    private MockMvc mockMvc;
-
-    @Before
-    public void setUpMockMvc()
-    {
-        mockMvc = MockMvcBuilders.webAppContextSetup(_webApplicationContext)
-                                 .build();
-        eventRepository.deleteAll();
-        personRepository.deleteAll();
-    }
+public class EventsControllerTest extends AbstractControllerTest {
 
     @Test
     public void canRetrieveEvents()
@@ -67,11 +35,12 @@ public class EventsControllerTest {
 
         eventRepository.save(Arrays.asList(event1, event2));
 
+        EventEntity eventEntity1 = new EventEntity().setName("name1");
+        EventEntity eventEntity2 = new EventEntity().setName("name2");
+
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$", hasSize(2)))
-               .andExpect(jsonPath("$[0].name", is("name1")))
-               .andExpect(jsonPath("$[1].name", is("name2")));
+                .andExpect(content().json(asJson(Arrays.asList(eventEntity1, eventEntity2)), true));
     }
 
     @Test
@@ -80,7 +49,7 @@ public class EventsControllerTest {
     {
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$", hasSize(0)));
+               .andExpect(content().json(asJson(new ArrayList<>()), true));
     }
 
     @Test
@@ -95,26 +64,26 @@ public class EventsControllerTest {
 
         eventRepository.save(event);
 
+        EventEntity expected = new EventEntity().setName("event")
+            .addInvitation(new EventEntity.InvitationEntity("person", "Yes"));
+
         mockMvc.perform(get("/api/events"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is("event")))
-                .andExpect(jsonPath("$[0].invitations", hasSize(1)))
-                .andExpect(jsonPath("$[0].invitations[0].name", is("person")))
-                .andExpect(jsonPath("$[0].invitations[0].response", is("Yes")));
+               .andExpect(status().isOk())
+               .andExpect(content().json(asJson(Collections.singletonList(expected)), true));
     }
 
     @Test
     public void canRetrieveSingleEvent()
-        throws  Exception
+        throws Exception
     {
         Event event = new Event("event");
         eventRepository.save(event);
 
+        EventEntity expected = new EventEntity().setName("event");
+
         mockMvc.perform(get(String.format("/api/events/%s", event.getId())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("event")))
-                .andExpect(jsonPath("$.invitations", hasSize(0)));
+               .andExpect(status().isOk())
+               .andExpect(content().json(asJson(expected), true));
     }
 
 
@@ -127,16 +96,30 @@ public class EventsControllerTest {
         Person person = new Person("person");
         personRepository.save(person);
 
+        EventEntity expected = new EventEntity().setName("event")
+            .addInvitation(new EventEntity.InvitationEntity("person", "none"));
+
         mockMvc.perform(post(String.format("/api/events/%s/invite?id=%s", event.getId(), person.getId())))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.name", is("event")))
-        .andExpect(jsonPath("$.invitations", hasSize(1)))
-        .andExpect(jsonPath("$.invitations[0].name", is("person")))
-        .andExpect(jsonPath("$.invitations[0].response", is("none")));
+               .andExpect(status().isOk())
+               .andExpect(content().json(asJson(expected), true));
 
         Event received = eventRepository.findOne(event.getId());
         assertThat(received.getInvitations(), hasSize(1));
         assertThat(received.getInvitations().get(0).getPerson(), equalTo(person));
+    }
+
+    private static String asJson(List<EventEntity> entityList)
+        throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(entityList);
+    }
+
+    private static String asJson(EventEntity entity)
+        throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(entity);
     }
 
 }

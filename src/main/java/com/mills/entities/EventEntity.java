@@ -14,7 +14,7 @@ public class EventEntity {
     private String name;
     private List<InvitationEntity> invitations = new ArrayList<>();
 
-    private EventEntity() {
+    public EventEntity() {
 
     }
 
@@ -53,11 +53,11 @@ public class EventEntity {
         return this;
     }
 
-    private static class InvitationEntity {
+    public static class InvitationEntity {
         private String name;
         private String response;
 
-        InvitationEntity(String name, String response) {
+        public InvitationEntity(String name, String response) {
             setName(name);
             setResponse(response);
         }
