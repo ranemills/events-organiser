@@ -1,5 +1,6 @@
 package com.mills.controllers;
 
+import com.mills.ResponseEnum;
 import com.mills.entities.PersonEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
@@ -49,13 +50,13 @@ public class PersonControllerTest extends AbstractControllerTest {
         Event event = new Event("event");
         Person person = new Person("person");
         InvitedRelationship relationship = new InvitedRelationship(event, person);
-        relationship.setResponse("Yes");
+        relationship.setResponse(ResponseEnum.YES);
         person.setInvitations(Collections.singletonList(relationship));
 
         personRepository.save(person);
 
         PersonEntity expected = new PersonEntity().setName("person")
-                                                  .addInvitation(new PersonEntity.InvitationEntity("event", "Yes"));
+                                                  .addInvitation(new PersonEntity.InvitationEntity("event", ResponseEnum.YES));
 
         mockMvc.perform(get("/api/people"))
                .andExpect(status().isOk())

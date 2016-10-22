@@ -1,5 +1,6 @@
 package com.mills.models;
 
+import com.mills.ResponseEnum;
 import org.neo4j.ogm.annotation.*;
 
 /**
@@ -17,13 +18,13 @@ public class InvitedRelationship {
     private Person person;
 
     @Property
-    private String response;
+    private ResponseEnum response;
 
     public InvitedRelationship(Event event, Person person)
     {
         this.event = event;
         this.person = person;
-        this.response = "none";
+        this.response = ResponseEnum.NO_RESPONSE;
     }
 
     public Event getEvent() {
@@ -44,11 +45,11 @@ public class InvitedRelationship {
         return this;
     }
 
-    public String getResponse() {
+    public ResponseEnum getResponse() {
         return response;
     }
 
-    public InvitedRelationship setResponse(String response) {
+    public InvitedRelationship setResponse(ResponseEnum response) {
         this.response = response;
         return this;
     }

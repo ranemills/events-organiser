@@ -1,5 +1,6 @@
 package com.mills.entities;
 
+import com.mills.ResponseEnum;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
 
@@ -56,9 +57,9 @@ public class PersonEntity {
 
     public static class InvitationEntity {
         private String name;
-        private String response;
+        private ResponseEnum response;
 
-        public InvitationEntity(String name, String response) {
+        public InvitationEntity(String name, ResponseEnum response) {
             setName(name);
             setResponse(response);
         }
@@ -71,11 +72,11 @@ public class PersonEntity {
             this.name = name;
         }
 
-        public String getResponse() {
+        public ResponseEnum getResponse() {
             return response;
         }
 
-        public void setResponse(String response) {
+        public void setResponse(ResponseEnum response) {
             this.response = response;
         }
     }

@@ -1,5 +1,6 @@
 package com.mills.controllers;
 
+import com.mills.ResponseEnum;
 import com.mills.entities.EventEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
@@ -53,13 +54,13 @@ public class EventsControllerTest extends AbstractControllerTest {
         Event event = new Event("event");
         Person person = new Person("person");
         InvitedRelationship relationship = new InvitedRelationship(event, person);
-        relationship.setResponse("Yes");
+        relationship.setResponse(ResponseEnum.YES);
         event.setInvitations(Collections.singletonList(relationship));
 
         eventRepository.save(event);
 
         EventEntity expected = new EventEntity().setName("event")
-                                                .addInvitation(new EventEntity.InvitationEntity("person", "Yes"));
+                                                .addInvitation(new EventEntity.InvitationEntity("person", ResponseEnum.YES));
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
@@ -90,7 +91,7 @@ public class EventsControllerTest extends AbstractControllerTest {
         personRepository.save(person);
 
         EventEntity expected = new EventEntity().setName("event")
-                                                .addInvitation(new EventEntity.InvitationEntity("person", "none"));
+                                                .addInvitation(new EventEntity.InvitationEntity("person", ResponseEnum.NO_RESPONSE));
 
         mockMvc.perform(post(String.format("/api/events/%s/invite?id=%s", event.getId(), person.getId())))
                .andExpect(status().isOk())
