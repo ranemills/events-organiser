@@ -1,7 +1,7 @@
 package com.mills.entities;
 
-import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
+import com.mills.models.Person;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,22 +9,22 @@ import java.util.List;
 /**
  * Created by ryanmills on 21/10/2016.
  */
-public class EventEntity {
+public class PersonEntity {
 
     private String name;
     private List<InvitationEntity> invitations = new ArrayList<>();
 
-    public EventEntity() {
+    public PersonEntity() {
 
     }
 
-    public static EventEntity fromEvent(Event event) {
-        EventEntity entity = new EventEntity();
-        entity.setName(event.getName());
+    public static PersonEntity fromPerson(Person person) {
+        PersonEntity entity = new PersonEntity();
+        entity.setName(person.getName());
 
-        for (InvitedRelationship relationship : event.getInvitations()) {
-            InvitationEntity invitationEntity = new InvitationEntity(relationship.getPerson().getName(), relationship
-                                                                                                             .getResponse());
+        for (InvitedRelationship relationship : person.getInvitations()) {
+            InvitationEntity invitationEntity = new InvitationEntity(relationship.getEvent().getName(),
+                                                                     relationship.getResponse());
             entity.addInvitation(invitationEntity);
         }
 
@@ -35,7 +35,7 @@ public class EventEntity {
         return name;
     }
 
-    public EventEntity setName(String name) {
+    public PersonEntity setName(String name) {
         this.name = name;
         return this;
     }
@@ -44,12 +44,12 @@ public class EventEntity {
         return invitations;
     }
 
-    public EventEntity setInvitations(List<InvitationEntity> invitations) {
+    public PersonEntity setInvitations(List<InvitationEntity> invitations) {
         this.invitations = invitations;
         return this;
     }
 
-    public EventEntity addInvitation(InvitationEntity invitation) {
+    public PersonEntity addInvitation(InvitationEntity invitation) {
         this.invitations.add(invitation);
         return this;
     }

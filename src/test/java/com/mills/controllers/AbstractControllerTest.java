@@ -1,5 +1,7 @@
 package com.mills.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mills.EventsApplication;
 import com.mills.EventsNeo4jTestConfiguration;
 import com.mills.repositories.EventRepository;
@@ -31,7 +33,14 @@ public class AbstractControllerTest {
     @Autowired
     protected PersonRepository personRepository;
 
-    protected MockMvc mockMvc;
+    MockMvc mockMvc;
+
+    static String asJson(Object object)
+        throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(object);
+    }
 
     @Before
     public void setUpMockMvc()

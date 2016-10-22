@@ -2,6 +2,10 @@ package com.mills.models;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NodeEntity
 public class Person {
@@ -9,11 +13,22 @@ public class Person {
     private Long id;
 
     private String name;
+    @Relationship(type = "INVITED")
+    private List<InvitedRelationship> invitations = new ArrayList<>();
 
-    private Person() {}
+    private Person() {
+    }
 
     public Person(String name) {
         setName(name);
+    }
+
+    public List<InvitedRelationship> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(List<InvitedRelationship> invitations) {
+        this.invitations = invitations;
     }
 
     public Long getId() {

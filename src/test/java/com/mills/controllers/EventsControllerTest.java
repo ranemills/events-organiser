@@ -1,7 +1,5 @@
 package com.mills.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mills.entities.EventEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
@@ -11,17 +9,13 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
-import static org.apache.coyote.http11.Constants.a;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class EventsControllerTest extends AbstractControllerTest {
@@ -40,7 +34,7 @@ public class EventsControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
-                .andExpect(content().json(asJson(Arrays.asList(eventEntity1, eventEntity2)), true));
+               .andExpect(content().json(asJson(Arrays.asList(eventEntity1, eventEntity2)), true));
     }
 
     @Test
@@ -65,7 +59,7 @@ public class EventsControllerTest extends AbstractControllerTest {
         eventRepository.save(event);
 
         EventEntity expected = new EventEntity().setName("event")
-            .addInvitation(new EventEntity.InvitationEntity("person", "Yes"));
+                                                .addInvitation(new EventEntity.InvitationEntity("person", "Yes"));
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
@@ -86,7 +80,6 @@ public class EventsControllerTest extends AbstractControllerTest {
                .andExpect(content().json(asJson(expected), true));
     }
 
-
     @Test
     public void canInvitePerson()
         throws Exception
@@ -97,7 +90,7 @@ public class EventsControllerTest extends AbstractControllerTest {
         personRepository.save(person);
 
         EventEntity expected = new EventEntity().setName("event")
-            .addInvitation(new EventEntity.InvitationEntity("person", "none"));
+                                                .addInvitation(new EventEntity.InvitationEntity("person", "none"));
 
         mockMvc.perform(post(String.format("/api/events/%s/invite?id=%s", event.getId(), person.getId())))
                .andExpect(status().isOk())
@@ -106,20 +99,6 @@ public class EventsControllerTest extends AbstractControllerTest {
         Event received = eventRepository.findOne(event.getId());
         assertThat(received.getInvitations(), hasSize(1));
         assertThat(received.getInvitations().get(0).getPerson(), equalTo(person));
-    }
-
-    private static String asJson(List<EventEntity> entityList)
-        throws JsonProcessingException
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(entityList);
-    }
-
-    private static String asJson(EventEntity entity)
-        throws JsonProcessingException
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(entity);
     }
 
 }
