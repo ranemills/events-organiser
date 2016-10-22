@@ -1,9 +1,15 @@
 package com.mills;
 
+import com.mills.models.Event;
+import com.mills.models.InvitedRelationship;
+import com.mills.models.Person;
+import com.mills.repositories.EventRepository;
+import com.mills.repositories.PersonRepository;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,6 +33,7 @@ import org.springframework.web.filter.CompositeFilter;
 import javax.servlet.Filter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @SpringBootApplication
 @EnableOAuth2Client
@@ -38,6 +45,27 @@ public class EventsApplication extends WebSecurityConfigurerAdapter {
 
     public static void main(String[] args) {
         SpringApplication.run(EventsApplication.class, args);
+    }
+
+    @Bean
+    CommandLineRunner insertData(EventRepository eventRepository, PersonRepository personRepository) {
+        eventRepository.deleteAll();
+        personRepository.deleteAll();
+
+        Random random = new Random();
+
+        return args -> {
+            List<Event> events = new ArrayList<>();
+            for (Integer i = 0; i < 5; i++) {
+                Event event = new Event(RandomStringUtils.randomAlphabetic(10));
+                for (Integer j = 0; j < random.nextInt() + 10; j++) {
+                    Person person = new Person(RandomStringUtils.randomAlphanumeric(10));
+                    event.addInvitation(new InvitedRelationship(event, person));
+                }
+                events.add(event);
+            }
+            eventRepository.save(events);
+        };
     }
 
     @Override
@@ -61,8 +89,8 @@ public class EventsApplication extends WebSecurityConfigurerAdapter {
     private Filter ssoFilter() {
         CompositeFilter filter = new CompositeFilter();
         List<Filter> filters = new ArrayList<>();
-        filters.add(ssoFilter(facebook(), "/login/facebook"));
-        filters.add(ssoFilter(github(), "/login/github"));
+//        filters.add(ssoFilter(facebook(), "/login/facebook"));
+//        filters.add(ssoFilter(github(), "/login/github"));
         filters.add(ssoFilter(google(), "/login/google"));
         filter.setFilters(filters);
         return filter;
