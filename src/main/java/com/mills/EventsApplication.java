@@ -56,11 +56,19 @@ public class EventsApplication extends WebSecurityConfigurerAdapter {
 
         return args -> {
             List<Event> events = new ArrayList<>();
+            List<Person> people = new ArrayList<>();
+
+            for(int i=0; i<20; i++) {
+                Person person = new Person(RandomStringUtils.randomAlphanumeric(10));
+                people.add(person);
+            }
+
             for (Integer i = 0; i < 5; i++) {
                 Event event = new Event(RandomStringUtils.randomAlphabetic(10));
-                for (Integer j = 0; j < random.nextInt() + 10; j++) {
-                    Person person = new Person(RandomStringUtils.randomAlphanumeric(10));
-                    event.addInvitation(new InvitedRelationship(event, person));
+                int numInvitations = random.nextInt(10);
+                for (Integer j = 0; j < numInvitations; j++) {
+                    int personIdx = random.nextInt(people.size());
+                    event.addInvitation(new InvitedRelationship(event, people.get(personIdx)));
                 }
                 events.add(event);
             }
