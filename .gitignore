@@ -65,6 +65,8 @@ buildNumber.properties
 # IntelliJ
 /out/
 
+**/bower_components
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 

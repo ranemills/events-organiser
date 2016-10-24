@@ -83,7 +83,7 @@ public class EventsApplication extends WebSecurityConfigurerAdapter {
         http
             .antMatcher("/**")
             .authorizeRequests()
-            .antMatchers("/", "/login**", "/webjars/**")
+            .antMatchers("/", "/login**", "/scripts/**", "/bower_components/**")
             .permitAll()
             .anyRequest()
             .authenticated()
