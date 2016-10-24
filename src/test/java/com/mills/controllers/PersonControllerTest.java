@@ -56,7 +56,7 @@ public class PersonControllerTest extends AbstractControllerTest {
         personRepository.save(person);
 
         PersonEntity expected = new PersonEntity().setName("person")
-                                                  .addInvitation(new PersonEntity.InvitationEntity("event", ResponseEnum.YES));
+                                                  .addInvitation(new PersonEntity.InvitationEntity(event.getId(), "event", ResponseEnum.YES));
 
         mockMvc.perform(get("/api/people"))
                .andExpect(status().isOk())

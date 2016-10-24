@@ -60,7 +60,7 @@ public class EventsControllerTest extends AbstractControllerTest {
         eventRepository.save(event);
 
         EventEntity expected = new EventEntity().setName("event")
-                                                .addInvitation(new EventEntity.InvitationEntity("person", ResponseEnum.YES));
+                                                .addInvitation(new EventEntity.InvitationEntity(person.getId(), "person", ResponseEnum.YES));
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
@@ -91,7 +91,7 @@ public class EventsControllerTest extends AbstractControllerTest {
         personRepository.save(person);
 
         EventEntity expected = new EventEntity().setName("event")
-                                                .addInvitation(new EventEntity.InvitationEntity("person", ResponseEnum.NO_RESPONSE));
+                                                .addInvitation(new EventEntity.InvitationEntity(person.getId(), "person", ResponseEnum.NO_RESPONSE));
 
         mockMvc.perform(post(String.format("/api/events/%s/invite?id=%s", event.getId(), person.getId())))
                .andExpect(status().isOk())
