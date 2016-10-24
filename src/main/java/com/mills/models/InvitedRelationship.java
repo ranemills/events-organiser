@@ -1,6 +1,6 @@
 package com.mills.models;
 
-import com.mills.ResponseEnum;
+import com.mills.enums.ResponseEnum;
 import org.neo4j.ogm.annotation.*;
 
 /**

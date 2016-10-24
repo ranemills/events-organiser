@@ -1,4 +1,4 @@
-package com.mills;
+package com.mills.enums;
 
 /**
  * Created by ryan on 22/10/16.

@@ -1,6 +1,6 @@
 package com.mills.entities;
 
-import com.mills.ResponseEnum;
+import com.mills.enums.ResponseEnum;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
 

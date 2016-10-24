@@ -1,6 +1,6 @@
 package com.mills.controllers;
 
-import com.mills.ResponseEnum;
+import com.mills.enums.ResponseEnum;
 import com.mills.entities.EventEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
