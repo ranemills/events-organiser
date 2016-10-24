@@ -1,0 +1,8 @@
+.scroll-container {
+    width: 100%;
+    overflow-x: scroll;
+}
+
+.fixed-width.card {
+    width: 300px;
+}

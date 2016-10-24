@@ -20,10 +20,36 @@ angular.module("app", [])
     });
   };
 
+  function createEvent(event) {
+    var responseCounts = _.countBy(event.invitations, 'response');
+    return {
+      id: event.id,
+      name: event.name,
+      responses: {
+        yes: {
+          count: responseCounts['YES'],
+          people: _.filter(event.invitations, {response: 'YES'})
+        },
+        no: {
+          count: responseCounts['NO'],
+          people: _.filter(event.invitations, {response: 'NO'})
+        },
+        maybe: {
+          count: responseCounts['MAYBE'],
+          people: _.filter(event.invitations, {response: 'MAYBE'})
+        },
+        noResponse: {
+          count: responseCounts['NO_RESPONSE'],
+          people: _.filter(event.invitations, {response: 'NO_RESPONSE'})
+        }
+      }
+    }
+  }
+
   userPromise.then(function () {
     if (self.authenticated) {
       $http.get('/api/events').then(function (response) {
-        self.events = response.data;
+        self.events = _.map(response.data, createEvent);
       });
       $http.get('/api/people').then(function (response) {
         self.people = response.data;
@@ -32,7 +58,9 @@ angular.module("app", [])
   });
 
   self.peopleNotInEvent = function (event) {
-    var personNames = _.map(event.invitations, 'name');
+    var personNames = _.transform(event.responses, function(result, value, key) {
+      result.push(value.people);
+    }, []);
     return _.filter(self.people, function (person) {
       return !_.includes(personNames, person.name);
     });

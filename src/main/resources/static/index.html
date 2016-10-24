@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width"/>
     <base href="/"/>
 
+    <link type="text/css" rel="stylesheet" href="css/main.css">
+
     <link type="text/css" rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
 
     <script type="application/javascript" src="bower_components/jquery/dist/jquery.js"></script>
@@ -38,25 +40,39 @@
     </div>
 </nav>
 
-<div class="container" ng-show="home.authenticated">
-    <div class="card-columns">
-        <div class="card" ng-repeat="event in home.events">
-            <div class="card-block">
-                <h4 class="card-title">{{event.name}}</h4>
-                <ul class="card-text list-unstyled">
-                    <li ng-repeat="person in event.invitations">{{person.name}}: {{person.response}}</li>
-                    <li>
+<div class="container-fluid" ng-show="home.authenticated">
+    <div class="scroll-container">
+        <div class="card-deck-wrapper card-deck">
+            <div class="card fixed-width" ng-repeat="event in home.events">
+                <div class="card-header">
+                    <h4 class="card-title">{{event.name}}</h4>
+                </div>
+                <div class="card-block">
+                    <div class="list-group list-group-flush card-text">
+                        <div class="list-group-item text-capitalize" ng-repeat-start="(key, value) in event.responses">
+                            {{key}} ({{value.count || 0}} people)
+                        </div>
+                        <div class="list-group-item" ng-if="value.people.length > 0" ng-repeat-end>
+                            <div class="list-group">
+                                <div class="list-group-item" ng-repeat="person in value.people">{{person.name}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer" style="position: absolute; bottom: 0; width: 100%">
+                    <span>
+                        Invite:
                         <select ng-model="home.invite[event.id]"
                                 ng-options="person.name for person in home.peopleNotInEvent(event)"
                                 name="new-user">
                         </select>
-                        <span ng-click="home.invitePerson(event.id)">+</span>
-                    </li>
-                </ul>
+                        <button type="button" class="btn btn-sm btn-primary"
+                                ng-click="home.invitePerson(event.id)">+</button>
+                    </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </body>
 
 
