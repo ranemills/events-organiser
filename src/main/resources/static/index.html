@@ -36,8 +36,15 @@
         <div class="card" ng-repeat="event in home.events">
             <div class="card-block">
                 <h4 class="card-title">{{event.name}}</h4>
-                <ul class="card-text">
+                <ul class="card-text list-unstyled">
                     <li ng-repeat="person in event.invitations">{{person.name}}</li>
+                    <li>
+                      <select ng-model="home.invite[event.id]"
+                              ng-options="person.name for person in home.peopleNotInEvent(event)"
+                              name="new-user">
+                      </select>
+                      <span ng-click="home.invitePerson(event.id)">+</span>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -46,8 +53,11 @@
 </body>
 
 <script type="text/javascript" src="/webjars/angularjs/angular.min.js"></script>
+<script type="text/javascript" src="/webjars/lodash/lodash.min.js"></script>
 <script type="text/javascript">
-    angular.module("app", []).controller("home", function ($http, $location) {
+    angular.module("app", [])
+      .constant('_', window._)
+      .controller("home", function (_, $http, $location) {
         var self = this;
         var userPromise = $http.get("/api/user").success(function (data) {
             self.user = data.userAuthentication.details.name;
@@ -72,8 +82,26 @@
                 $http.get('/api/events').then(function(response) {
                    self.events =  response.data;
                 });
+                $http.get('/api/people').then(function(response) {
+                    self.people = response.data;
+                });
             }
-        })
+        });
+
+        self.peopleNotInEvent = function(event) {
+          var personNames = _.map(event.invitations, 'name');
+          return _.filter(self.people, function(person) { return !_.includes(personNames, person.name); });
+        };
+
+        self.invitePerson = function(eventId) {
+          $http.post('/api/events/' + eventId + '/invite?id=' + self.invite[eventId].id).then(function(response) {
+            _.remove(self.events, {'id': eventId});
+            self.events.push(response.data);
+          });
+        };
+
+        self.people = [];
+        self.events = [];
     });
 </script>
 

@@ -20,6 +20,8 @@ public class InvitedRelationship {
     @Property
     private ResponseEnum response;
 
+    private InvitedRelationship() {}
+
     public InvitedRelationship(Event event, Person person)
     {
         this.event = event;

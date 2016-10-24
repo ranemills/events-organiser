@@ -12,24 +12,34 @@ import java.util.List;
  */
 public class PersonEntity {
 
+    private Long id;
     private String name;
     private List<InvitationEntity> invitations = new ArrayList<>();
-
     public PersonEntity() {
 
     }
 
     public static PersonEntity fromPerson(Person person) {
         PersonEntity entity = new PersonEntity();
+        entity.setId(person.getId());
         entity.setName(person.getName());
 
         for (InvitedRelationship relationship : person.getInvitations()) {
-            InvitationEntity invitationEntity = new InvitationEntity(relationship.getEvent().getName(),
-                                                                     relationship.getResponse());
+            InvitationEntity invitationEntity = new InvitationEntity(relationship.getEvent().getId(),
+                    relationship.getEvent().getName(),
+                    relationship.getResponse());
             entity.addInvitation(invitationEntity);
         }
 
         return entity;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -56,12 +66,21 @@ public class PersonEntity {
     }
 
     public static class InvitationEntity {
+        private Long id;
         private String name;
         private ResponseEnum response;
-
-        public InvitationEntity(String name, ResponseEnum response) {
+        public InvitationEntity(Long id, String name, ResponseEnum response) {
+            setId(id);
             setName(name);
             setResponse(response);
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
         }
 
         public String getName() {

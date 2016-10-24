@@ -87,6 +87,11 @@
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
+            <artifactId>lodash</artifactId>
+            <version>4.15.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
             <artifactId>webjars-locator</artifactId>
         </dependency>
 
