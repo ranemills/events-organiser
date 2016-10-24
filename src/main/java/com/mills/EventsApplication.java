@@ -1,11 +1,12 @@
 package com.mills;
 
+import com.mills.enums.ResponseEnum;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
 import com.mills.repositories.EventRepository;
 import com.mills.repositories.PersonRepository;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.kohsuke.randname.RandomNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,6 +18,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.annotation.SynthesizedAnnotation;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
@@ -47,28 +49,36 @@ public class EventsApplication extends WebSecurityConfigurerAdapter {
         SpringApplication.run(EventsApplication.class, args);
     }
 
+    private static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
+        int x = new Random().nextInt(clazz.getEnumConstants().length);
+        return clazz.getEnumConstants()[x];
+    }
+
     @Bean
     CommandLineRunner insertData(EventRepository eventRepository, PersonRepository personRepository) {
         eventRepository.deleteAll();
         personRepository.deleteAll();
 
         Random random = new Random();
+        RandomNameGenerator randomNameGenerator = new RandomNameGenerator(0);
 
         return args -> {
             List<Event> events = new ArrayList<>();
             List<Person> people = new ArrayList<>();
 
-            for(int i=0; i<20; i++) {
-                Person person = new Person(RandomStringUtils.randomAlphanumeric(10));
+            for (int i = 0; i < 20; i++) {
+                Person person = new Person(randomNameGenerator.next());
                 people.add(person);
             }
 
-            for (Integer i = 0; i < 5; i++) {
-                Event event = new Event(RandomStringUtils.randomAlphabetic(10));
-                int numInvitations = random.nextInt(10);
+            for (Integer i = 0; i < 20; i++) {
+                Event event = new Event(randomNameGenerator.next());
+                int numInvitations = 8 + random.nextInt(4);
                 for (Integer j = 0; j < numInvitations; j++) {
                     int personIdx = random.nextInt(people.size());
-                    event.addInvitation(new InvitedRelationship(event, people.get(personIdx)));
+                    InvitedRelationship invitation = new InvitedRelationship(event, people.get(personIdx));
+                    invitation.setResponse(randomEnum(ResponseEnum.class));
+                    event.addInvitation(invitation);
                 }
                 events.add(event);
             }
