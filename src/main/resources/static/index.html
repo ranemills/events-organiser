@@ -37,7 +37,7 @@
             <div class="card-block">
                 <h4 class="card-title">{{event.name}}</h4>
                 <ul class="card-text list-unstyled">
-                    <li ng-repeat="person in event.invitations">{{person.name}}</li>
+                    <li ng-repeat="person in event.invitations">{{person.name}}: {{person.response}}</li>
                     <li>
                       <select ng-model="home.invite[event.id]"
                               ng-options="person.name for person in home.peopleNotInEvent(event)"
