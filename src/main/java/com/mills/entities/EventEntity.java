@@ -39,8 +39,9 @@ public class EventEntity {
         return id;
     }
 
-    public void setId(Long id) {
+    public EventEntity setId(Long id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {

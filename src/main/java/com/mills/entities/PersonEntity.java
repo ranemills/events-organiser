@@ -38,8 +38,9 @@ public class PersonEntity {
         return id;
     }
 
-    public void setId(Long id) {
+    public PersonEntity setId(Long id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {

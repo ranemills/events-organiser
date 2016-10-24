@@ -30,8 +30,8 @@ public class EventsControllerTest extends AbstractControllerTest {
 
         eventRepository.save(Arrays.asList(event1, event2));
 
-        EventEntity eventEntity1 = new EventEntity().setName("name1");
-        EventEntity eventEntity2 = new EventEntity().setName("name2");
+        EventEntity eventEntity1 = new EventEntity().setId(event1.getId()).setName("name1");
+        EventEntity eventEntity2 = new EventEntity().setId(event2.getId()).setName("name2");
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
@@ -59,7 +59,8 @@ public class EventsControllerTest extends AbstractControllerTest {
 
         eventRepository.save(event);
 
-        EventEntity expected = new EventEntity().setName("event")
+        EventEntity expected = new EventEntity().setId(event.getId())
+                                                .setName("event")
                                                 .addInvitation(new EventEntity.InvitationEntity(person.getId(), "person", ResponseEnum.YES));
 
         mockMvc.perform(get("/api/events"))
@@ -74,7 +75,8 @@ public class EventsControllerTest extends AbstractControllerTest {
         Event event = new Event("event");
         eventRepository.save(event);
 
-        EventEntity expected = new EventEntity().setName("event");
+        EventEntity expected = new EventEntity().setId(event.getId())
+                                                .setName("event");
 
         mockMvc.perform(get(String.format("/api/events/%s", event.getId())))
                .andExpect(status().isOk())
@@ -90,7 +92,8 @@ public class EventsControllerTest extends AbstractControllerTest {
         Person person = new Person("person");
         personRepository.save(person);
 
-        EventEntity expected = new EventEntity().setName("event")
+        EventEntity expected = new EventEntity().setId(event.getId())
+                                                .setName("event")
                                                 .addInvitation(new EventEntity.InvitationEntity(person.getId(), "person", ResponseEnum.NO_RESPONSE));
 
         mockMvc.perform(post(String.format("/api/events/%s/invite?id=%s", event.getId(), person.getId())))

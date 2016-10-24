@@ -23,7 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles(profiles = "test")
 @WebAppConfiguration
 @WithMockUser
-public class AbstractControllerTest {
+public abstract class AbstractControllerTest {
 
     @Autowired
     protected WebApplicationContext _webApplicationContext;

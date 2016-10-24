@@ -26,8 +26,8 @@ public class PersonControllerTest extends AbstractControllerTest {
 
         personRepository.save(Arrays.asList(person1, person2));
 
-        PersonEntity personEntity1 = new PersonEntity().setName("name1");
-        PersonEntity personEntity2 = new PersonEntity().setName("name2");
+        PersonEntity personEntity1 = new PersonEntity().setId(person1.getId()).setName("name1");
+        PersonEntity personEntity2 = new PersonEntity().setId(person2.getId()).setName("name2");
 
         mockMvc.perform(get("/api/people"))
                .andExpect(status().isOk())
@@ -55,7 +55,8 @@ public class PersonControllerTest extends AbstractControllerTest {
 
         personRepository.save(person);
 
-        PersonEntity expected = new PersonEntity().setName("person")
+        PersonEntity expected = new PersonEntity().setId(person.getId())
+                                                  .setName("person")
                                                   .addInvitation(new PersonEntity.InvitationEntity(event.getId(), "event", ResponseEnum.YES));
 
         mockMvc.perform(get("/api/people"))
@@ -70,7 +71,7 @@ public class PersonControllerTest extends AbstractControllerTest {
         Person person = new Person("person");
         personRepository.save(person);
 
-        PersonEntity expected = new PersonEntity().setName("person");
+        PersonEntity expected = new PersonEntity().setId(person.getId()).setName("person");
 
         mockMvc.perform(get(String.format("/api/people/%s", person.getId())))
                .andExpect(status().isOk())
