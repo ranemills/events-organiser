@@ -47,6 +47,17 @@
                 <div class="card-header">
                     <h4 class="card-title">{{event.name}}</h4>
                 </div>
+                <div class="card-block text-xs-center">
+                    <span>
+                        Invite:
+                        <select ng-model="home.invite[event.id]"
+                                ng-options="person.name for person in home.peopleNotInEvent(event)"
+                                name="new-user">
+                        </select>
+                        <button type="button" class="btn btn-sm btn-primary"
+                                ng-click="home.invitePerson(event.id)">+</button>
+                    </span>
+                </div>
                 <div class="card-block">
                     <div class="list-group list-group-flush card-text">
                         <div class="list-group-item text-capitalize" ng-repeat-start="(key, value) in event.responses">
@@ -57,17 +68,6 @@
                                 <div class="list-group-item" ng-repeat="person in value.people">{{person.name}}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-footer" style="position: absolute; bottom: 0; width: 100%">
-                    <span>
-                        Invite:
-                        <select ng-model="home.invite[event.id]"
-                                ng-options="person.name for person in home.peopleNotInEvent(event)"
-                                name="new-user">
-                        </select>
-                        <button type="button" class="btn btn-sm btn-primary"
-                                ng-click="home.invitePerson(event.id)">+</button>
-                    </span>
                     </div>
                 </div>
             </div>
