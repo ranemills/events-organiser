@@ -5,18 +5,23 @@ import com.mills.entities.EventEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
+import org.json.JSONObject;
 import org.junit.Test;
+import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class EventsControllerTest extends AbstractControllerTest {
@@ -103,6 +108,28 @@ public class EventsControllerTest extends AbstractControllerTest {
         Event received = eventRepository.findOne(event.getId());
         assertThat(received.getInvitations(), hasSize(1));
         assertThat(received.getInvitations().get(0).getPerson(), equalTo(person));
+    }
+
+    @Test
+    public void canCreateEvent()
+        throws Exception
+    {
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("name", "test");
+
+        mockMvc.perform(post("/api/events").content(requestBody.toString()).contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.name", is("test")));
+
+        Iterable<Event> received = eventRepository.findAll();
+        List<Event> eventList = new ArrayList<>();
+
+        for(Event event : received) {
+            eventList.add(event);
+        }
+
+        assertThat(eventList, hasSize(1));
+        assertThat(eventList.get(0).getName(), is("test"));
     }
 
 }

@@ -73,6 +73,15 @@ angular.module("app", [])
     });
   };
 
+  self.addEvent = function () {
+    if(!_.isEmpty(self.newEventName)) {
+      $http.post('/api/events', {name: self.newEventName}).then(function(response) {
+        self.events.push(createEvent(response.data));
+      });
+    }
+  };
+
   self.people = [];
   self.events = [];
+  self.newEventName = '';
 });
