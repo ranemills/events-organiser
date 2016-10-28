@@ -69,7 +69,7 @@ angular.module("app", [])
   self.invitePerson = function (eventId) {
     $http.post('/api/events/' + eventId + '/invite?id=' + self.invite[eventId].id).then(function (response) {
       _.remove(self.events, {'id': eventId});
-      self.events.push(response.data);
+      self.events.push(createEvent(response.data));
     });
   };
 
