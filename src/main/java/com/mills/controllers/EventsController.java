@@ -75,7 +75,7 @@ public class EventsController {
     public InvitationResponseEntity updateResponse(@PathVariable("eventId") Long eventId,
                                  @PathVariable("personId") Long personId,
                                  @RequestBody InvitationResponseEntity responseEntity) {
-        return invitationService.updateInvitation(eventId, personId, responseEntity);
+        return invitationService.updateOrCreateInvitation(eventId, personId, responseEntity);
     }
 
     @RequestMapping(value = "/{eventId}/{personId}", method = RequestMethod.GET)

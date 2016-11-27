@@ -28,24 +28,18 @@ public class InvitationService {
     }
 
     public InvitationResponseEntity getEventResponseEntity(Long eventId, Long personId) {
-        InvitedRelationship invitation = getEventResponse(eventId, personId);
-        InvitationResponseEntity responseEntity = new InvitationResponseEntity();
-        responseEntity.setResponse(invitation.getResponse());
-        return responseEntity;
+        InvitedRelationship invitation = invitationRepository.getResponse(eventId, personId);
+        return new InvitationResponseEntity(invitation);
     }
 
-    public InvitedRelationship getEventResponse(Long eventId, Long personId) {
-        return invitationRepository.getResponse(eventId, personId);
-    }
-
-    public InvitationResponseEntity updateInvitation(Long eventId, Long personId, InvitationResponseEntity entity) {
-        InvitedRelationship invitation = getEventResponse(eventId, personId);
+    public InvitationResponseEntity updateOrCreateInvitation(Long eventId, Long personId, InvitationResponseEntity entity) {
+        InvitedRelationship invitation = invitationRepository.getResponse(eventId, personId);
 
         if(invitation == null) {
             invitation = createInvitation(eventId, personId);
         }
 
-        invitation.setResponse(entity.getResponse());
+        updateToMatch(invitation, entity);
 
         return saveInvitation(invitation);
     }
@@ -59,6 +53,10 @@ public class InvitationService {
     private InvitationResponseEntity saveInvitation(InvitedRelationship invitation) {
         invitationRepository.save(invitation);
         return new InvitationResponseEntity(invitation);
+    }
+
+    private static void updateToMatch(InvitedRelationship invitation, InvitationResponseEntity entity) {
+        invitation.setResponse(entity.getResponse());
     }
 
 }
