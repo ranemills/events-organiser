@@ -6,9 +6,8 @@ import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
 import com.mills.repositories.EventRepository;
-import com.mills.repositories.InvitationRepository;
 import com.mills.repositories.PersonRepository;
-import com.mills.services.EventService;
+import com.mills.services.InvitationService;
 import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +31,7 @@ public class EventsController {
     @Autowired
     private PersonRepository personRepository;
     @Autowired
-    private InvitationRepository invitationRepository;
-
-    @Autowired
-    private EventService eventService;
+    private InvitationService invitationService;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<EventEntity> getEvents() {
@@ -56,12 +52,13 @@ public class EventsController {
         return EventEntity.fromEvent(event);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public EventEntity getEvent(@PathVariable("id") Long eventId) {
+    @RequestMapping(value = "/{eventId}", method = RequestMethod.GET)
+    public EventEntity getEvent(@PathVariable("eventId") Long eventId) {
         Event event = eventRepository.findOne(eventId);
         return EventEntity.fromEvent(event);
     }
 
+    @Deprecated
     @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
     public EventEntity inviteToEvent(@PathVariable("id") Long eventId, @RequestParam("id") Long personId) {
         Event event = eventRepository.findOne(eventId);
@@ -78,25 +75,13 @@ public class EventsController {
     public InvitationResponseEntity updateResponse(@PathVariable("eventId") Long eventId,
                                  @PathVariable("personId") Long personId,
                                  @RequestBody InvitationResponseEntity responseEntity) {
-        InvitedRelationship invitation = eventService.getEventResponse(eventId, personId);
-
-        if(invitation == null) {
-            Event event = eventRepository.findOne(eventId);
-            Person person = personRepository.findOne(personId);
-            invitation = new InvitedRelationship(event, person);
-        }
-
-        invitation.setResponse(responseEntity.getResponse());
-
-        invitationRepository.save(invitation);
-
-        return eventService.getEventResponseEntity(eventId, personId);
+        return invitationService.updateInvitation(eventId, personId, responseEntity);
     }
 
     @RequestMapping(value = "/{eventId}/{personId}", method = RequestMethod.GET)
     public InvitationResponseEntity getResponse(@PathVariable("eventId") Long eventId,
                                                 @PathVariable("personId") Long personId) {
-        return eventService.getEventResponseEntity(eventId, personId);
+        return invitationService.getEventResponseEntity(eventId, personId);
     }
 
 

@@ -1,6 +1,7 @@
 package com.mills.entities;
 
 import com.mills.enums.ResponseEnum;
+import com.mills.models.InvitedRelationship;
 
 /**
  * Created by ryan on 27/11/16.
@@ -8,6 +9,12 @@ import com.mills.enums.ResponseEnum;
 public class InvitationResponseEntity {
 
     private ResponseEnum response;
+
+    public InvitationResponseEntity() {}
+
+    public InvitationResponseEntity(InvitedRelationship invitation) {
+        response = invitation.getResponse();
+    }
 
     public ResponseEnum getResponse() {
         return response;
