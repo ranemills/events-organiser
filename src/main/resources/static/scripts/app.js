@@ -27,20 +27,20 @@ angular.module("app", [])
       name: event.name,
       responses: {
         yes: {
-          count: responseCounts['YES'],
-          people: _.filter(event.invitations, {response: 'YES'})
+          count: responseCounts['yes'],
+          people: _.filter(event.invitations, {response: 'yes'})
         },
         no: {
-          count: responseCounts['NO'],
-          people: _.filter(event.invitations, {response: 'NO'})
+          count: responseCounts['no'],
+          people: _.filter(event.invitations, {response: 'no'})
         },
         maybe: {
-          count: responseCounts['MAYBE'],
-          people: _.filter(event.invitations, {response: 'MAYBE'})
+          count: responseCounts['maybe'],
+          people: _.filter(event.invitations, {response: 'maybe'})
         },
-        noResponse: {
-          count: responseCounts['NO_RESPONSE'],
-          people: _.filter(event.invitations, {response: 'NO_RESPONSE'})
+        'No Response': {
+          count: responseCounts['no_response'],
+          people: _.filter(event.invitations, {response: 'no_response'})
         }
       }
     }
@@ -67,9 +67,11 @@ angular.module("app", [])
   };
 
   self.invitePerson = function (eventId) {
-    $http.post('/api/events/' + eventId + '/invite?id=' + self.invite[eventId].id).then(function (response) {
-      _.remove(self.events, {'id': eventId});
-      self.events.push(createEvent(response.data));
+    $http.put('/api/events/' + eventId + '/' + self.invite[eventId].id, {response: 'no_response'}).then(function (response) {
+      var event = _.find(self.events, {id: eventId});
+      _.remove(self.events, {id: eventId});
+      event.response = response.data.response;
+      self.events.push(event);
     });
   };
 

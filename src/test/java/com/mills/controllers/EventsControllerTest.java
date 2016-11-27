@@ -86,6 +86,7 @@ public class EventsControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
+               .andExpect(jsonPath("$[0].invitations", hasSize(1)))
                .andExpect(content().json(asJson(Collections.singletonList(expected)), true));
     }
 
