@@ -32,6 +32,9 @@ public class EventsController {
     @Autowired
     private PersonRepository personRepository;
     @Autowired
+    private InvitationRepository invitationRepository;
+
+    @Autowired
     private EventService eventService;
 
     @RequestMapping(method = RequestMethod.GET)
@@ -71,17 +74,29 @@ public class EventsController {
         return EventEntity.fromEvent(event);
     }
 
-//    @RequestMapping(value = "/{eventId}/{personId}/response", method = RequestMethod.PUT)
-//    public String updateResponse(@PathVariable("eventId") Long eventId,
-//                                 @PathVariable("eventId") Long personId,
-//                                 @RequestParam("response") String response) {
-//
-//    }
+    @RequestMapping(value = "/{eventId}/{personId}", method = RequestMethod.PUT)
+    public InvitationResponseEntity updateResponse(@PathVariable("eventId") Long eventId,
+                                 @PathVariable("personId") Long personId,
+                                 @RequestBody InvitationResponseEntity responseEntity) {
+        InvitedRelationship invitation = eventService.getEventResponse(eventId, personId);
+
+        if(invitation == null) {
+            Event event = eventRepository.findOne(eventId);
+            Person person = personRepository.findOne(personId);
+            invitation = new InvitedRelationship(event, person);
+        }
+
+        invitation.setResponse(responseEntity.getResponse());
+
+        invitationRepository.save(invitation);
+
+        return eventService.getEventResponseEntity(eventId, personId);
+    }
 
     @RequestMapping(value = "/{eventId}/{personId}", method = RequestMethod.GET)
     public InvitationResponseEntity getResponse(@PathVariable("eventId") Long eventId,
                                                 @PathVariable("personId") Long personId) {
-        return eventService.getEventResponse(eventId, personId);
+        return eventService.getEventResponseEntity(eventId, personId);
     }
 
 

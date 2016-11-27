@@ -1,7 +1,7 @@
 package com.mills.controllers;
 
-import com.mills.enums.ResponseEnum;
 import com.mills.entities.EventEntity;
+import com.mills.enums.ResponseEnum;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,8 +44,12 @@ public class EventsControllerTest extends AbstractControllerTest {
 
         eventRepository.save(Arrays.asList(event1, event2));
 
-        EventEntity eventEntity1 = new EventEntity().setId(event1.getId()).setName("name1").setDate(DateTime.now().plusDays(7));
-        EventEntity eventEntity2 = new EventEntity().setId(event2.getId()).setName("name2").setDate(DateTime.now().plusDays(7));
+        EventEntity eventEntity1 = new EventEntity().setId(event1.getId()).setName("name1").setDate(DateTime.now()
+                                                                                                            .plusDays
+                                                                                                                 (7));
+        EventEntity eventEntity2 = new EventEntity().setId(event2.getId()).setName("name2").setDate(DateTime.now()
+                                                                                                            .plusDays
+                                                                                                                 (7));
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
@@ -112,7 +117,10 @@ public class EventsControllerTest extends AbstractControllerTest {
         EventEntity expected = new EventEntity().setId(event.getId())
                                                 .setName("event")
                                                 .setDate(DateTime.now().plusDays(7))
-                                                .addInvitation(new EventEntity.InvitationEntity(person.getId(), "person", ResponseEnum.NO_RESPONSE));
+                                                .addInvitation(new EventEntity.InvitationEntity(person.getId(),
+                                                                                                "person",
+                                                                                                ResponseEnum
+                                                                                                    .NO_RESPONSE));
 
         mockMvc.perform(post(String.format("/api/events/%s/invite?id=%s", event.getId(), person.getId())))
                .andExpect(status().isOk())
@@ -137,7 +145,7 @@ public class EventsControllerTest extends AbstractControllerTest {
         Iterable<Event> received = eventRepository.findAll();
         List<Event> eventList = new ArrayList<>();
 
-        for(Event event : received) {
+        for (Event event : received) {
             eventList.add(event);
         }
 
@@ -149,7 +157,7 @@ public class EventsControllerTest extends AbstractControllerTest {
     public void canGetResponseObjectWithNonDefault()
         throws Exception
     {
-        Event event  = new Event("testEvent", DateTime.now());
+        Event event = new Event("testEvent", DateTime.now());
         Person person = new Person("testPerson");
 
         InvitedRelationship invitation = new InvitedRelationship(event, person);
@@ -159,14 +167,14 @@ public class EventsControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(get(String.format("/api/events/%s/%s", event.getId(), person.getId())))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.response", is("MAYBE")));
+               .andExpect(jsonPath("$.response", is("maybe")));
     }
 
     @Test
     public void canGetResponseObject()
         throws Exception
     {
-        Event event  = new Event("testEvent", DateTime.now());
+        Event event = new Event("testEvent", DateTime.now());
         Person person = new Person("testPerson");
 
         InvitedRelationship invitation = new InvitedRelationship(event, person);
@@ -175,7 +183,54 @@ public class EventsControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(get(String.format("/api/events/%s/%s", event.getId(), person.getId())))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.response", is("NO_RESPONSE")));
+               .andExpect(jsonPath("$.response", is("no_response")));
+    }
+
+    @Test
+    public void canAddResponseObject()
+        throws Exception
+    {
+        Event event = new Event("testEvent", DateTime.now());
+        eventRepository.save(event);
+        Person person = new Person("testPerson");
+        personRepository.save(person);
+
+        JSONObject responseObject = new JSONObject();
+        responseObject.put("response", "no_response");
+
+        mockMvc.perform(put(String.format("/api/events/%s/%s", event.getId(), person.getId()))
+                            .content(responseObject.toString())
+                            .contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.response", is("no_response")));
+
+        Event resultantEvent = eventRepository.findOne(event.getId());
+        assertThat(resultantEvent.getInvitations(), hasSize(1));
+    }
+
+    @Test
+    public void canUpdateResponseObject()
+        throws Exception
+    {
+        Event event = new Event("testEvent", DateTime.now());
+        Person person = new Person("testPerson");
+
+        InvitedRelationship invitation = new InvitedRelationship(event, person);
+
+        invitationRepository.save(invitation);
+
+        JSONObject responseObject = new JSONObject();
+        responseObject.put("response", "yes");
+
+        mockMvc.perform(put(String.format("/api/events/%s/%s", event.getId(), person.getId()))
+                            .content(responseObject.toString())
+                            .contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.response", is("yes")));
+
+        Event resultantEvent = eventRepository.findOne(event.getId());
+        assertThat(resultantEvent.getInvitations(), hasSize(1));
+        assertThat(resultantEvent.getInvitations().get(0).getResponse(), is(ResponseEnum.YES));
     }
 
 }

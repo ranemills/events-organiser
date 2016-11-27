@@ -20,11 +20,15 @@ public class EventService {
         this.invitationRepository = invitationRepository;
     }
 
-    public InvitationResponseEntity getEventResponse(Long eventId, Long personId) {
-        InvitedRelationship invitation = invitationRepository.getResponse(eventId, personId);
+    public InvitationResponseEntity getEventResponseEntity(Long eventId, Long personId) {
+        InvitedRelationship invitation = getEventResponse(eventId, personId);
         InvitationResponseEntity responseEntity = new InvitationResponseEntity();
         responseEntity.setResponse(invitation.getResponse());
         return responseEntity;
+    }
+
+    public InvitedRelationship getEventResponse(Long eventId, Long personId) {
+        return invitationRepository.getResponse(eventId, personId);
     }
 
 }
