@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mills.EventsApplication;
 import com.mills.EventsNeo4jTestConfiguration;
 import com.mills.repositories.EventRepository;
+import com.mills.repositories.InvitationRepository;
 import com.mills.repositories.PersonRepository;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -32,6 +33,8 @@ public abstract class AbstractControllerTest {
     protected EventRepository eventRepository;
     @Autowired
     protected PersonRepository personRepository;
+    @Autowired
+    protected InvitationRepository invitationRepository;
 
     MockMvc mockMvc;
 

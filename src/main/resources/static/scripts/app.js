@@ -58,7 +58,7 @@ angular.module("app", [])
   });
 
   self.peopleNotInEvent = function (event) {
-    var personNames = _.transform(event.responses, function(result, value, key) {
+    var personNames = _.transform(event.responses, function(result, value) {
       result.push(value.people);
     }, []);
     return _.filter(self.people, function (person) {

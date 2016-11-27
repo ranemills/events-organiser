@@ -1,11 +1,14 @@
 package com.mills.controllers;
 
 import com.mills.entities.EventEntity;
+import com.mills.entities.InvitationResponseEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
 import com.mills.repositories.EventRepository;
+import com.mills.repositories.InvitationRepository;
 import com.mills.repositories.PersonRepository;
+import com.mills.services.EventService;
 import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +31,13 @@ public class EventsController {
     private EventRepository eventRepository;
     @Autowired
     private PersonRepository personRepository;
+    @Autowired
+    private EventService eventService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<EventEntity> events() {
+    public List<EventEntity> getEvents() {
         List<EventEntity> response = new ArrayList<>();
-        for(Event event : eventRepository.findAll())
-        {
+        for (Event event : eventRepository.findAll()) {
             response.add(EventEntity.fromEvent(event));
         }
         return response;
@@ -50,13 +54,13 @@ public class EventsController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public EventEntity event(@PathVariable("id") Long eventId) {
+    public EventEntity getEvent(@PathVariable("id") Long eventId) {
         Event event = eventRepository.findOne(eventId);
         return EventEntity.fromEvent(event);
     }
 
     @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
-    public EventEntity event(@PathVariable("id") Long eventId, @RequestParam("id") Long personId) {
+    public EventEntity inviteToEvent(@PathVariable("id") Long eventId, @RequestParam("id") Long personId) {
         Event event = eventRepository.findOne(eventId);
         Person person = personRepository.findOne(personId);
         InvitedRelationship invitation = new InvitedRelationship(event, person);
@@ -66,5 +70,19 @@ public class EventsController {
 
         return EventEntity.fromEvent(event);
     }
+
+//    @RequestMapping(value = "/{eventId}/{personId}/response", method = RequestMethod.PUT)
+//    public String updateResponse(@PathVariable("eventId") Long eventId,
+//                                 @PathVariable("eventId") Long personId,
+//                                 @RequestParam("response") String response) {
+//
+//    }
+
+    @RequestMapping(value = "/{eventId}/{personId}", method = RequestMethod.GET)
+    public InvitationResponseEntity getResponse(@PathVariable("eventId") Long eventId,
+                                                @PathVariable("personId") Long personId) {
+        return eventService.getEventResponse(eventId, personId);
+    }
+
 
 }

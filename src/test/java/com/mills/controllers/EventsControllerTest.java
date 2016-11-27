@@ -145,4 +145,37 @@ public class EventsControllerTest extends AbstractControllerTest {
         assertThat(eventList.get(0).getName(), is("test"));
     }
 
+    @Test
+    public void canGetResponseObjectWithNonDefault()
+        throws Exception
+    {
+        Event event  = new Event("testEvent", DateTime.now());
+        Person person = new Person("testPerson");
+
+        InvitedRelationship invitation = new InvitedRelationship(event, person);
+        invitation.setResponse(ResponseEnum.MAYBE);
+
+        invitationRepository.save(invitation);
+
+        mockMvc.perform(get(String.format("/api/events/%s/%s", event.getId(), person.getId())))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.response", is("MAYBE")));
+    }
+
+    @Test
+    public void canGetResponseObject()
+        throws Exception
+    {
+        Event event  = new Event("testEvent", DateTime.now());
+        Person person = new Person("testPerson");
+
+        InvitedRelationship invitation = new InvitedRelationship(event, person);
+
+        invitationRepository.save(invitation);
+
+        mockMvc.perform(get(String.format("/api/events/%s/%s", event.getId(), person.getId())))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.response", is("NO_RESPONSE")));
+    }
+
 }
