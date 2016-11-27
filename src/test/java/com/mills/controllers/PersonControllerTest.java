@@ -5,6 +5,7 @@ import com.mills.entities.PersonEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class PersonControllerTest extends AbstractControllerTest {
     public void canRetrievePersonWithInvitedPeople()
         throws Exception
     {
-        Event event = new Event("event");
+        Event event = new Event("event", DateTime.now().plusDays(7));
         Person person = new Person("person");
         InvitedRelationship relationship = new InvitedRelationship(event, person);
         relationship.setResponse(ResponseEnum.YES);

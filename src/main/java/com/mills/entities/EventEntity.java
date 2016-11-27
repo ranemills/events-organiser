@@ -1,19 +1,20 @@
 package com.mills.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mills.enums.ResponseEnum;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by ryanmills on 21/10/2016.
- */
 public class EventEntity {
 
     private Long id;
     private String name;
+    @JsonFormat(pattern = "dd-mm-YYYY")
+    private DateTime date;
     private List<InvitationEntity> invitations = new ArrayList<>();
 
     public EventEntity() {
@@ -24,15 +25,25 @@ public class EventEntity {
         EventEntity entity = new EventEntity();
         entity.setId(event.getId());
         entity.setName(event.getName());
+        entity.setDate(event.getDate());
 
         for (InvitedRelationship relationship : event.getInvitations()) {
             InvitationEntity invitationEntity = new InvitationEntity(relationship.getPerson().getId(),
-                    relationship.getPerson().getName(),
-                    relationship.getResponse());
+                                                                     relationship.getPerson().getName(),
+                                                                     relationship.getResponse());
             entity.addInvitation(invitationEntity);
         }
 
         return entity;
+    }
+
+    public DateTime getDate() {
+        return date;
+    }
+
+    public EventEntity setDate(DateTime date) {
+        this.date = date;
+        return this;
     }
 
     public Long getId() {

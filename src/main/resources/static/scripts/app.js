@@ -3,8 +3,8 @@ angular.module("app", [])
 .controller("home", function (_, $http, $location) {
   var self = this;
   var userPromise = $http.get("/api/user").success(function (data) {
-    self.user = data.userAuthentication.details.name;
-    self.authenticated = true;
+    self.user = _.get(data, 'userAuthentication.details.name', null);
+    self.authenticated = self.user !== null;
   }).error(function () {
     self.user = "N/A";
     self.authenticated = false;

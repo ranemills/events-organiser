@@ -5,7 +5,10 @@ import com.mills.entities.EventEntity;
 import com.mills.models.Event;
 import com.mills.models.InvitedRelationship;
 import com.mills.models.Person;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 
@@ -26,17 +29,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class EventsControllerTest extends AbstractControllerTest {
 
+    @Before
+    public void freezeTime() {
+        DateTimeUtils.setCurrentMillisFixed(0);
+    }
+
     @Test
     public void canRetrieveEvents()
         throws Exception
     {
-        Event event1 = new Event("name1");
-        Event event2 = new Event("name2");
+        Event event1 = new Event("name1", DateTime.now().plusDays(7));
+        Event event2 = new Event("name2", DateTime.now().plusDays(7));
 
         eventRepository.save(Arrays.asList(event1, event2));
 
-        EventEntity eventEntity1 = new EventEntity().setId(event1.getId()).setName("name1");
-        EventEntity eventEntity2 = new EventEntity().setId(event2.getId()).setName("name2");
+        EventEntity eventEntity1 = new EventEntity().setId(event1.getId()).setName("name1").setDate(DateTime.now().plusDays(7));
+        EventEntity eventEntity2 = new EventEntity().setId(event2.getId()).setName("name2").setDate(DateTime.now().plusDays(7));
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
@@ -56,7 +64,7 @@ public class EventsControllerTest extends AbstractControllerTest {
     public void canRetrieveEventWithInvitedPeople()
         throws Exception
     {
-        Event event = new Event("event");
+        Event event = new Event("event", DateTime.now().plusDays(7));
         Person person = new Person("person");
         InvitedRelationship relationship = new InvitedRelationship(event, person);
         relationship.setResponse(ResponseEnum.YES);
@@ -66,7 +74,10 @@ public class EventsControllerTest extends AbstractControllerTest {
 
         EventEntity expected = new EventEntity().setId(event.getId())
                                                 .setName("event")
-                                                .addInvitation(new EventEntity.InvitationEntity(person.getId(), "person", ResponseEnum.YES));
+                                                .setDate(DateTime.now().plusDays(7))
+                                                .addInvitation(new EventEntity.InvitationEntity(person.getId(),
+                                                                                                "person",
+                                                                                                ResponseEnum.YES));
 
         mockMvc.perform(get("/api/events"))
                .andExpect(status().isOk())
@@ -77,10 +88,11 @@ public class EventsControllerTest extends AbstractControllerTest {
     public void canRetrieveSingleEvent()
         throws Exception
     {
-        Event event = new Event("event");
+        Event event = new Event("event", DateTime.now().plusDays(7));
         eventRepository.save(event);
 
         EventEntity expected = new EventEntity().setId(event.getId())
+                                                .setDate(DateTime.now().plusDays(7))
                                                 .setName("event");
 
         mockMvc.perform(get(String.format("/api/events/%s", event.getId())))
@@ -92,13 +104,14 @@ public class EventsControllerTest extends AbstractControllerTest {
     public void canInvitePerson()
         throws Exception
     {
-        Event event = new Event("event");
+        Event event = new Event("event", DateTime.now().plusDays(7));
         eventRepository.save(event);
         Person person = new Person("person");
         personRepository.save(person);
 
         EventEntity expected = new EventEntity().setId(event.getId())
                                                 .setName("event")
+                                                .setDate(DateTime.now().plusDays(7))
                                                 .addInvitation(new EventEntity.InvitationEntity(person.getId(), "person", ResponseEnum.NO_RESPONSE));
 
         mockMvc.perform(post(String.format("/api/events/%s/invite?id=%s", event.getId(), person.getId())))

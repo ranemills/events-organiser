@@ -65,14 +65,12 @@
                     </span>
                 </div>
                 <div class="card-block">
-                    <div class="list-group list-group-flush card-text">
-                        <div class="list-group-item text-capitalize" ng-repeat-start="(key, value) in event.responses">
-                            {{key}} ({{value.count || 0}} people)
-                        </div>
-                        <div class="list-group-item" ng-if="value.people.length > 0" ng-repeat-end>
-                            <div class="list-group">
-                                <div class="list-group-item" ng-repeat="person in value.people">{{person.name}}</div>
-                            </div>
+                    <div ng-repeat="(key, value) in event.responses">
+                        <h4 class="text-capitalize text-muted">
+                             {{key}} ({{value.count || 0}} people)
+                        </h4>
+                        <div class="list-group">
+                            <div class="list-group-item" ng-repeat="person in value.people">{{person.name}}</div>
                         </div>
                     </div>
                 </div>

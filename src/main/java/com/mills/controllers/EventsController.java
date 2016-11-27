@@ -7,6 +7,7 @@ import com.mills.models.Person;
 import com.mills.repositories.EventRepository;
 import com.mills.repositories.PersonRepository;
 import org.apache.commons.lang3.Validate;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,7 +43,7 @@ public class EventsController {
     public EventEntity createEvent(@RequestBody Map<String, String> requestParams) {
         Validate.notNull(requestParams.get("name"));
 
-        Event event = new Event(requestParams.get("name"));
+        Event event = new Event(requestParams.get("name"), DateTime.now().plusDays(7));
         eventRepository.save(event);
 
         return EventEntity.fromEvent(event);
