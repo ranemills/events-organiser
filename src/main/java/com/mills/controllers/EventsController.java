@@ -29,8 +29,6 @@ public class EventsController {
     @Autowired
     private EventRepository eventRepository;
     @Autowired
-    private PersonRepository personRepository;
-    @Autowired
     private InvitationService invitationService;
 
     @RequestMapping(method = RequestMethod.GET)
@@ -55,19 +53,6 @@ public class EventsController {
     @RequestMapping(value = "/{eventId}", method = RequestMethod.GET)
     public EventEntity getEvent(@PathVariable("eventId") Long eventId) {
         Event event = eventRepository.findOne(eventId);
-        return EventEntity.fromEvent(event);
-    }
-
-    @Deprecated
-    @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
-    public EventEntity inviteToEvent(@PathVariable("id") Long eventId, @RequestParam("id") Long personId) {
-        Event event = eventRepository.findOne(eventId);
-        Person person = personRepository.findOne(personId);
-        InvitedRelationship invitation = new InvitedRelationship(event, person);
-        event.addInvitation(invitation);
-
-        event = eventRepository.save(event);
-
         return EventEntity.fromEvent(event);
     }
 

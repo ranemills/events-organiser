@@ -1,6 +1,7 @@
 package com.mills.models;
 
 import com.mills.enums.ResponseEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.neo4j.ogm.annotation.*;
 
 /**
@@ -54,5 +55,15 @@ public class InvitedRelationship {
     public InvitedRelationship setResponse(ResponseEnum response) {
         this.response = response;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                   .append("relationshipId", relationshipId)
+                   .append("event", event)
+                   .append("person", person)
+                   .append("response", response)
+                   .toString();
     }
 }

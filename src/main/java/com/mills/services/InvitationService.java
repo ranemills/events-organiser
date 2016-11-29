@@ -36,6 +36,7 @@ public class InvitationService {
         InvitedRelationship invitation = invitationRepository.getResponse(eventId, personId);
 
         if(invitation == null) {
+            System.err.println("Create a new invitation");
             invitation = createInvitation(eventId, personId);
         }
 
@@ -51,6 +52,7 @@ public class InvitationService {
     }
 
     private InvitationResponseEntity saveInvitation(InvitedRelationship invitation) {
+        System.out.printf("Saving invitation: %s \n", invitation);
         invitationRepository.save(invitation);
         return new InvitationResponseEntity(invitation);
     }

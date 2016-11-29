@@ -61,7 +61,7 @@
                                 name="new-user">
                         </select>
                         <button type="button" class="btn btn-sm btn-primary"
-                                ng-click="home.invitePerson(event.id)">+</button>
+                                ng-click="home.invitePerson(event)">+</button>
                     </span>
                 </div>
                 <div class="card-block">
@@ -70,7 +70,12 @@
                              {{key}} ({{value.count || 0}} people)
                         </h4>
                         <div class="list-group">
-                            <div class="list-group-item" ng-repeat="person in value.people">{{person.name}}</div>
+                            <div class="list-group-item" ng-repeat="person in value.people">
+                                <span>{{person.name}}</span>
+                                <span ng-click="home.updateResponse(event, person, 'yes')">(tick)</span>
+                                <span ng-click="home.updateResponse(event, person, 'maybe')">(question)</span>
+                                <span ng-click="home.updateResponse(event, person, 'no')">(cross)</span>
+                            </div>
                         </div>
                     </div>
                 </div>

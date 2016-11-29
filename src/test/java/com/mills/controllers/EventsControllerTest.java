@@ -19,7 +19,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -104,32 +103,6 @@ public class EventsControllerTest extends AbstractControllerTest {
         mockMvc.perform(get(String.format("/api/events/%s", event.getId())))
                .andExpect(status().isOk())
                .andExpect(content().json(asJson(expected), true));
-    }
-
-    @Test
-    public void canInvitePerson()
-        throws Exception
-    {
-        Event event = new Event("event", DateTime.now().plusDays(7));
-        eventRepository.save(event);
-        Person person = new Person("person");
-        personRepository.save(person);
-
-        EventEntity expected = new EventEntity().setId(event.getId())
-                                                .setName("event")
-                                                .setDate(DateTime.now().plusDays(7))
-                                                .addInvitation(new EventEntity.InvitationEntity(person.getId(),
-                                                                                                "person",
-                                                                                                ResponseEnum
-                                                                                                    .NO_RESPONSE));
-
-        mockMvc.perform(post(String.format("/api/events/%s/invite?id=%s", event.getId(), person.getId())))
-               .andExpect(status().isOk())
-               .andExpect(content().json(asJson(expected), true));
-
-        Event received = eventRepository.findOne(event.getId());
-        assertThat(received.getInvitations(), hasSize(1));
-        assertThat(received.getInvitations().get(0).getPerson(), equalTo(person));
     }
 
     @Test

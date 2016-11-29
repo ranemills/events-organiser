@@ -83,6 +83,15 @@ angular.module("app", [])
     }
   };
 
+  self.updateResponse = function(event, person, newResponse) {
+    $http.put('/api/events/'+event.id+'/'+person.id, {response: newResponse}).then(function(response) {
+      var event = _.find(self.events, {id: event.id});
+      _.remove(self.events, {id: event.id});
+      event.response = response.data.response;
+      self.events.push(event);
+    });
+  };
+  
   self.people = [];
   self.events = [];
   self.newEventName = '';
