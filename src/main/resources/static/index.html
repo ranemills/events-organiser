@@ -65,12 +65,12 @@
                     </span>
                 </div>
                 <div class="card-block">
-                    <div ng-repeat="(key, value) in event.responses">
+                    <div ng-repeat="(key, value) in event.responseCounts">
                         <h4 class="text-capitalize text-muted">
-                             {{key}} ({{value.count || 0}} people)
+                             {{key}} ({{value || 0}} people)
                         </h4>
                         <div class="list-group">
-                            <div class="list-group-item" ng-repeat="person in value.people">
+                            <div class="list-group-item" ng-repeat="person in event.invitations | filter:{response:key}">
                                 <span>{{person.name}}</span>
                                 <span ng-click="home.updateResponse(event, person, 'yes')">(tick)</span>
                                 <span ng-click="home.updateResponse(event, person, 'maybe')">(question)</span>

@@ -49,7 +49,10 @@ angular.module("app", [])
   userPromise.then(function () {
     if (self.authenticated) {
       $http.get('/api/events').then(function (response) {
-        self.events = _.map(response.data, createEvent);
+        self.events = response.data;
+        _.each(self.events, function(event) {
+          setResponseCounts(event);
+        });
       });
       $http.get('/api/people').then(function (response) {
         self.people = response.data;
@@ -66,31 +69,39 @@ angular.module("app", [])
     });
   };
 
-  self.invitePerson = function (eventId) {
-    $http.put('/api/events/' + eventId + '/' + self.invite[eventId].id, {response: 'no_response'}).then(function (response) {
-      var event = _.find(self.events, {id: eventId});
-      _.remove(self.events, {id: eventId});
-      event.response = response.data.response;
-      self.events.push(event);
+  self.invitePerson = function (event) {
+    $http.put('/api/events/' + event.id + '/' + self.invite[event.id].id, {response: 'no_response'}).then(function (response) {
+      event.invitations.push(response.data);
+      setResponseCounts(event);
     });
   };
 
   self.addEvent = function () {
     if(!_.isEmpty(self.newEventName)) {
       $http.post('/api/events', {name: self.newEventName}).then(function(response) {
-        self.events.push(createEvent(response.data));
+        var event = response.data;
+        setResponseCounts(event);
+        self.events.push(event);
       });
     }
   };
 
   self.updateResponse = function(event, person, newResponse) {
     $http.put('/api/events/'+event.id+'/'+person.id, {response: newResponse}).then(function(response) {
-      var event = _.find(self.events, {id: event.id});
-      _.remove(self.events, {id: event.id});
-      event.response = response.data.response;
-      self.events.push(event);
+      _.merge(person, response.data);
+      setResponseCounts(event);
     });
   };
+
+  function setResponseCounts(event) {
+    var counts = _.countBy(event.invitations, 'response');
+    event.responseCounts = {
+      yes: _.get(counts, 'yes', 0),
+      maybe: _.get(counts, 'maybe', 0),
+      no: _.get(counts, 'no', 0),
+      no_response: _.get(counts, 'no_response', 0)
+    }
+  }
   
   self.people = [];
   self.events = [];
