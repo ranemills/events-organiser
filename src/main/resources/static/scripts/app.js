@@ -61,9 +61,7 @@ angular.module("app", [])
   });
 
   self.peopleNotInEvent = function (event) {
-    var personNames = _.transform(event.responses, function(result, value) {
-      result.push(value.people);
-    }, []);
+    var personNames = _.map(event.invitations, 'name');
     return _.filter(self.people, function (person) {
       return !_.includes(personNames, person.name);
     });
