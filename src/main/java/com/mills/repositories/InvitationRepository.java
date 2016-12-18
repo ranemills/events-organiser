@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface InvitationRepository extends GraphRepository<InvitedRelationship> {
 
     @Query("MATCH (e:Event)<-[r:INVITED]->(p:Person) WHERE id(e)={0} AND id(p)={1}  return r")
-    public InvitedRelationship getResponse(Long eventId, Long personId);
+    InvitedRelationship getResponse(Long eventId, Long personId);
 
 }

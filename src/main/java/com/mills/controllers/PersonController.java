@@ -18,8 +18,12 @@ import java.util.List;
 @RequestMapping("/api/people")
 public class PersonController {
 
+    private final PersonRepository personRepository;
+
     @Autowired
-    private PersonRepository personRepository;
+    public PersonController(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
     @RequestMapping
     public List<PersonEntity> people() {

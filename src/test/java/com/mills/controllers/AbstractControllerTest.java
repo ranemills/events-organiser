@@ -30,11 +30,11 @@ public abstract class AbstractControllerTest {
     protected WebApplicationContext _webApplicationContext;
 
     @Autowired
-    protected EventRepository eventRepository;
+    EventRepository eventRepository;
     @Autowired
-    protected PersonRepository personRepository;
+    PersonRepository personRepository;
     @Autowired
-    protected InvitationRepository invitationRepository;
+    InvitationRepository invitationRepository;
 
     MockMvc mockMvc;
 
