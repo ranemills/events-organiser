@@ -50,9 +50,7 @@ angular.module("app", [])
       if (self.authenticated) {
         $http.get('/api/events').then(function (response) {
           self.events = response.data;
-          _.each(self.events, function (event) {
-            setResponseCounts(event);
-          });
+          _.each(self.events, setResponseCounts);
         });
         $http.get('/api/people').then(function (response) {
           self.people = response.data;
