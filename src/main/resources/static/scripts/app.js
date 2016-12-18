@@ -70,9 +70,13 @@ angular.module("app", [])
   };
 
   self.invitePerson = function (event) {
-    $http.put('/api/events/' + event.id + '/' + self.invite[event.id].id, {response: 'no_response'}).then(function (response) {
-      event.invitations.push(response.data);
-      setResponseCounts(event);
+    var personId = self.invite[event.id].id;
+    $http.put('/api/events/' + event.id + '/' + personId, {response: 'no_response'}).then(function (response) {
+      var invitation = response.data;
+      invitation.name = self.invite[event.id].name;
+      invitation.id = personId;
+
+      event.invitations.push(invitation);
     });
   };
 
