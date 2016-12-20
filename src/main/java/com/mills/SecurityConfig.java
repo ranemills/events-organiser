@@ -1,6 +1,7 @@
 package com.mills;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,6 +22,9 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.filter.CompositeFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -38,6 +42,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.oauth2ClientContext = oauth2ClientContext;
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:8000", "http://localhost:8080")
+                        .allowCredentials(false);
+            }
+        };
+    }
+
     @Override
     protected void configure(HttpSecurity http)
         throws Exception
@@ -45,10 +61,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .antMatcher("/**")
             .authorizeRequests()
-            .antMatchers("/", "/login**", "/dist/**", "/bower_components/**")
-            .permitAll()
+//            .antMatchers("/", "/login**", "/dist/**", "/bower_components/**")
+//            .permitAll()
             .anyRequest()
-            .authenticated()
+            .permitAll()
             .and().exceptionHandling()
             .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
             .and().logout().logoutSuccessUrl("/").permitAll()

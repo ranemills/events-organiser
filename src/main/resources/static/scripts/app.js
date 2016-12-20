@@ -2,12 +2,25 @@ angular.module("app", [])
   .constant('_', window._)
   .controller("home", function (_, $http, $location) {
     let self = this;
-    let userPromise = $http.get("/api/user").success(function (data) {
-      self.user = _.get(data, 'userAuthentication.details.name', null);
+
+    let userPromise = $http.get("/api/user").then(function (response) {
+      self.user = _.get(response.data, 'userAuthentication.details.name', null);
       self.authenticated = self.user !== null;
-    }).error(function () {
+    }, function () {
       self.user = "N/A";
       self.authenticated = false;
+    });
+
+    userPromise.then(function () {
+      if (self.authenticated) {
+        $http.get('/api/events').then(function (response) {
+          self.events = response.data;
+          _.each(self.events, setResponseCounts);
+        });
+        $http.get('/api/people').then(function (response) {
+          self.people = response.data;
+        });
+      }
     });
 
     self.logout = function () {
@@ -45,18 +58,6 @@ angular.module("app", [])
         }
       }
     }
-
-    userPromise.then(function () {
-      if (self.authenticated) {
-        $http.get('/api/events').then(function (response) {
-          self.events = response.data;
-          _.each(self.events, setResponseCounts);
-        });
-        $http.get('/api/people').then(function (response) {
-          self.people = response.data;
-        });
-      }
-    });
 
     self.peopleNotInEvent = function (event) {
       let personNames = _.map(event.invitations, 'name');
