@@ -1,4 +1,4 @@
-angular.module("app", [])
+angular.module("app", ['angularMoment'])
   .constant('_', window._)
   .controller("home", function (_, $http, $location) {
     let self = this;
@@ -32,32 +32,6 @@ angular.module("app", [])
         self.authenticated = false;
       });
     };
-
-    function createEvent(event) {
-      let responseCounts = _.countBy(event.invitations, 'response');
-      return {
-        id: event.id,
-        name: event.name,
-        responses: {
-          yes: {
-            count: responseCounts['yes'],
-            people: _.filter(event.invitations, {response: 'yes'})
-          },
-          no: {
-            count: responseCounts['no'],
-            people: _.filter(event.invitations, {response: 'no'})
-          },
-          maybe: {
-            count: responseCounts['maybe'],
-            people: _.filter(event.invitations, {response: 'maybe'})
-          },
-          'No Response': {
-            count: responseCounts['no_response'],
-            people: _.filter(event.invitations, {response: 'no_response'})
-          }
-        }
-      }
-    }
 
     self.peopleNotInEvent = function (event) {
       let personNames = _.map(event.invitations, 'name');
@@ -105,4 +79,10 @@ angular.module("app", [])
     self.people = [];
     self.events = [];
     self.newEventName = '';
-  });
+  })
+.component('eventCard', {
+  templateUrl: 'html/components/event-card.html',
+  bindings: {
+    event: '='
+  }
+});

@@ -1,0 +1,13 @@
+<div class="card fixed-width">
+    <div class="card-header card-title text-xs-center">
+        <p>{{$ctrl.event.date | amDateFormat:'dddd DD MMMM YYYY'}}</p>
+        <p>{{$ctrl.event.name}}</p>
+    </div>
+    <div class="card-block">
+        <p>Required: WIP</p>
+        <p><strong>Yes:</strong> {{$ctrl.event.responseCounts['yes']}}
+            <strong>No:</strong> {{$ctrl.event.responseCounts['no']}}
+            <strong>Maybe:</strong> {{$ctrl.event.responseCounts['maybe']}}
+            <strong>No Response:</strong> {{$ctrl.event.responseCounts['no_response']}}</p>
+    </div>
+</div>
