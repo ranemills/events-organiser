@@ -22,6 +22,8 @@
     <script type="application/javascript" src="bower_components/angular-moment/angular-moment.js"></script>
 
     <script type="application/javascript" src="dist/app.js"></script>
+
+    <script src="//localhost:35729/livereload.js"></script>
 </head>
 <body ng-app="app" ng-controller="home as home">
 
@@ -98,7 +100,7 @@
 </div>
 -->
 
-<div class="container-fluid" ng-show="home.authenticated">
+<div class="container-fluid text-xs-center" ng-show="home.authenticated">
     <div class="card-deck card-deck-wrapper">
         <event-card ng-repeat="event in home.events" event="event">
     </div>

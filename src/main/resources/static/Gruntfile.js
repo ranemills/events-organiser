@@ -34,7 +34,16 @@ module.exports = function (grunt) {
       },
       scripts: {
         files: ['scripts/app.js'],
-        tasks: ['babel']
+        tasks: ['babel'],
+        options: {
+          livereload: true
+        }
+      },
+      html: {
+        files: ['html/**/*.html'],
+        options: {
+          livereload: true
+        }
       }
     }
   });

@@ -1,7 +1,10 @@
 <div class="card fixed-width">
-    <div class="card-header card-title text-xs-center">
-        <p>{{$ctrl.event.date | amDateFormat:'dddd DD MMMM YYYY'}}</p>
-        <p>{{$ctrl.event.name}}</p>
+    <div class="card-header card-title">
+        <p>
+            {{$ctrl.event.date | amDateFormat:'dddd DD MMMM YYYY'}}
+            <br />
+            {{$ctrl.event.name}}
+        </p>
     </div>
     <div class="card-block">
         <p>Required: WIP</p>
