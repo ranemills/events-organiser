@@ -109,6 +109,9 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
+                        <configuration>
+                            <arguments>install --production</arguments>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>bower install</id>
