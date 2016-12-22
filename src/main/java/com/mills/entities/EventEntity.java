@@ -13,7 +13,6 @@ public class EventEntity {
 
     private Long id;
     private String name;
-    @JsonFormat(pattern = "dd-mm-YYYY")
     private DateTime date;
     private List<InvitationEntity> invitations = new ArrayList<>();
 
