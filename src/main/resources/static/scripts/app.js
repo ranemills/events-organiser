@@ -79,40 +79,47 @@ angular.module("app", ['angularMoment'])
     self.people = [];
     self.events = [];
     self.newEventName = '';
+
+    self.view = 'list';
+
+    self.newEvent = function() {
+      self.view = 'add';
+    }
   })
-.component('eventCard', {
-  templateUrl: 'html/components/event-card.html',
-  bindings: {
-    event: '='
-  }
-})
-.component('addEventModal', {
-  templateUrl: 'html/components/add-event.html',
-  bindings: {
-    add: '&addEventFn'
-  },
-  controller: function($http, $q) {
-    let self = this;
+  .component('eventCard', {
+    templateUrl: 'html/components/event-card.html',
+    bindings: {
+      event: '='
+    }
+  })
+  .component('addEvent', {
+    binding: {
+      'finished': '&finishedFn'
+    },
+    templateUrl: 'html/components/add-event.html',
+    controller: function($http, $q) {
+      let self = this;
 
-    self.$onInit = function() {
-      $http.get('/api/people').then(function (response) {
-        self.people = response.data;
-      });
-      self.selectedPeople = {};
-    };
-
-    // Custom functions
-    self.save = function() {
-      $http.post('/api/events', {name: self.newEventName}).then(function (response) {
-        let eventId = response.data.id;
-        let promises = [];
-        _.each(self.selectedPeople, (value, id) => {
-          if(value) {
-            promises.push($http.put('/api/events/' + eventId + '/' + id, {response: 'no_response'}));
-          }
+      // Lifecycle bindings
+      self.$onInit = function() {
+        $http.get('/api/people').then(function (response) {
+          self.people = response.data;
         });
-        $q.all(promises).then(() => self.add(event));
-      });
-    };
-  }
-});
+        self.selectedPeople = {};
+      };
+
+      // Custom functions
+      self.save = function() {
+        $http.post('/api/events', {name: self.newEventName}).then(function (response) {
+          let eventId = response.data.id;
+          let promises = [];
+          _.each(self.selectedPeople, (value, id) => {
+            if (value) {
+              promises.push($http.put('/api/events/' + eventId + '/' + id, {response: 'no_response'}));
+            }
+          });
+          $q.all(promises).then(() => self.add(event));
+        });
+      };
+    }
+  });

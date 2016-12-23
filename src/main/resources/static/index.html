@@ -32,7 +32,7 @@
     <div class="nav navbar-nav">
 
         <form class="form-inline float-xs-left" ng-if="home.authenticated">
-            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEventModal">
+            <button class="btn btn-primary" type="button" ng-click="home.newEvent()">
                 Add event
             </button>
         </form>
@@ -100,16 +100,14 @@
 </div>
 -->
 
-<div class="container-fluid text-xs-center" ng-show="home.authenticated">
+<div class="container-fluid text-xs-center" ng-show="home.authenticated" ng-if="home.view === 'list'">
     <div class="card-deck card-deck-wrapper">
         <event-card ng-repeat="event in home.events" event="event">
     </div>
 </div>
 
-<div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="addEventModalTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-       <add-event-modal></add-event-modal>
-    </div>
+<div class="container-fluid text-xs-center" ng-show="home.authenticated" ng-if="home.view === 'add'">
+    <add-event></add-event>
 </div>
 
 </body>
