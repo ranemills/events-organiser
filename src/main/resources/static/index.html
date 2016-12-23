@@ -27,30 +27,7 @@
 </head>
 <body ng-app="app" ng-controller="home as home">
 
-<nav class="navbar navbar-light bg-faded">
-    <a class="navbar-brand" href="#">Events Organiser</a>
-    <div class="nav navbar-nav">
-
-        <form class="form-inline float-xs-left" ng-if="home.authenticated">
-            <button class="btn btn-primary" type="button" ng-click="home.newEvent()">
-                Add event
-            </button>
-        </form>
-
-        <a class="nav-item nav-link float-xs-right" href="/login/google" ng-if="!home.authenticated">Login with
-            Google</a>
-
-        <div class="nav-item dropdown float-xs-right" ng-if="home.authenticated">
-            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-               aria-expanded="false">
-                Logged in as {{home.user}}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" ng-click="home.logout()" ng-if="home.authenticated">Logout</a>
-            </div>
-        </div>
-    </div>
-</nav>
+<nav-bar></nav-bar>
 
 <!--
 <div class="container-fluid" ng-show="home.authenticated">
@@ -99,18 +76,10 @@
     </div>
 </div>
 -->
+<div ng-if="home.authenticated">
 
-<div class="container-fluid text-xs-center" ng-show="home.authenticated" ng-if="home.view === 'list'">
-    <div class="card-deck card-deck-wrapper">
-        <event-card ng-repeat="event in home.events" event="event">
-    </div>
+    <main-view></main-view>
 </div>
-
-<div class="container-fluid text-xs-center" ng-show="home.authenticated" ng-if="home.view === 'add'">
-    <add-event></add-event>
-</div>
-
 </body>
-
 
 </html>

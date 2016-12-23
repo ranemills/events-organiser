@@ -1,18 +1,61 @@
 angular.module("app", ['angularMoment'])
   .constant('_', window._)
-  .controller("home", function (_, $http, $location) {
+.service('AuthenticationService', function($http) {
+  let authenticated = false;
+  let user = null;
+
+  let authenticate = function() {
+    return $http.get("/api/user").then(function (response) {
+      user = _.get(response.data, 'userAuthentication.details.name', null);
+      authenticated = self.user !== null;
+    }, function () {
+      user = "N/A";
+      authenticated = false;
+    });
+  };
+
+  let getUser = () => user;
+  let isAuthenticated = () => authenticated;
+
+  return {
+    authenticate,
+    getUser,
+    isAuthenticated
+  }
+
+})
+  .controller("home", function ($scope, AuthenticationService) {
+    let self = this;
+    self.authenticated = false;
+
+    $scope.$watch(AuthenticationService.isAuthenticated, () => self.authenticated = AuthenticationService.isAuthenticated());
+  })
+.component('navBar', {
+  templateUrl: 'html/components/nav-bar.html',
+  controller: function(AuthenticationService) {
+    let self = this;
+    self.authenticated = false;
+    self.user = null;
+
+    self.$onInit = function() {
+      AuthenticationService.authenticate().then(
+        () => {
+          console.log(AuthenticationService.getUser());
+          self.user = AuthenticationService.getUser();
+          self.authenticated = AuthenticationService.isAuthenticated()
+        }
+      )
+    }
+  }
+})
+.component('mainView', {
+  templateUrl: 'html/components/main-view.html',
+  controller: function(_, $http, $location, AuthenticationService) {
     let self = this;
 
-    let userPromise = $http.get("/api/user").then(function (response) {
-      self.user = _.get(response.data, 'userAuthentication.details.name', null);
-      self.authenticated = self.user !== null;
-    }, function () {
-      self.user = "N/A";
-      self.authenticated = false;
-    });
-
-    userPromise.then(function () {
-      if (self.authenticated) {
+    if(AuthenticationService.authenticate()) {
+      if (AuthenticationService.isAuthenticated()) {
+        console.log('authenticated');
         $http.get('/api/events').then(function (response) {
           self.events = response.data;
           _.each(self.events, setResponseCounts);
@@ -21,7 +64,7 @@ angular.module("app", ['angularMoment'])
           self.people = response.data;
         });
       }
-    });
+    };
 
     self.logout = function () {
       $http.post('/logout', {}).success(function () {
@@ -85,7 +128,8 @@ angular.module("app", ['angularMoment'])
     self.newEvent = function() {
       self.view = 'add';
     }
-  })
+  }
+})
   .component('eventCard', {
     templateUrl: 'html/components/event-card.html',
     bindings: {
