@@ -1,0 +1,33 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="addEventModalTitle">Modal title</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <form>
+                <div class="form-group">
+                    <label for="eventName">Event name</label>
+                    <input type="text" class="form-control" id="eventName" placeholder="Enter name"
+                           ng-model="home.newEventName" ng-required>
+                </div>
+
+                <p>Invite the following people</p>
+
+                <div class="form-check" ng-repeat="person in $ctrl.people">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" ng-model="$ctrl.selectedPeople[person.id]">
+                        {{person.name}}
+                    </label>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Add</button>
+    </div>
+</div>
