@@ -25,48 +25,49 @@
 
     <script src="//localhost:35729/livereload.js"></script>
 </head>
-<body ng-app="app" ng-controller="home as home">
+<body ng-app="app">
 
-<nav-bar></nav-bar>
+<index></index>
 
-<!--
-<div class="container-fluid" ng-show="home.authenticated">
-    <div class="scroll-container">
-        <div class="card-deck-wrapper card-deck">
-            <div class="card fixed-width" ng-repeat="event in home.events">
-                <div class="card-header">
-                    <h4 class="card-title">{{event.name}}</h4>
-                </div>
-                <div class="card-block text-xs-center">
-                    <span>
-                        Invite:
-                        <select ng-model="home.invite[event.id]"
-                                ng-options="person.name for person in home.peopleNotInEvent(event)"
-                                name="new-user">
-                        </select>
-                        <button type="button" class="btn btn-sm btn-primary"
-                                ng-click="home.invitePerson(event)">+</button>
-                    </span>
-                </div>
-                <div class="card-block">
-                    <div ng-repeat="(key, value) in event.responseCounts">
-                        <h4 class="text-capitalize text-muted">
-                             {{key}} ({{value || 0}} people)
-                        </h4>
-                        <div class="list-group">
-                            <div class="list-group-item" ng-repeat="person in event.invitations | filter:{response:key}:true">
-                                <span>{{person.name}}</span>
-                                <span class="pull-right">
-                                    <a ng-click="home.updateResponse(event, person, 'yes')" aria-label="Yes">
-                                        <i class="fa fa-check"></i>
-                                    </a>
-                                    <a ng-click="home.updateResponse(event, person, 'maybe')" aria-label="Maybe">
-                                        <i class="fa fa-question"></i>
-                                    </a>
-                                    <a ng-click="home.updateResponse(event, person, 'no')" aria-label="No">
-                                        <i class="fa fa-times"></i>
-                                    </a>
-                                </span>
+    <!--
+    <div class="container-fluid" ng-show="home.authenticated">
+        <div class="scroll-container">
+            <div class="card-deck-wrapper card-deck">
+                <div class="card fixed-width" ng-repeat="event in home.events">
+                    <div class="card-header">
+                        <h4 class="card-title">{{event.name}}</h4>
+                    </div>
+                    <div class="card-block text-xs-center">
+                        <span>
+                            Invite:
+                            <select ng-model="home.invite[event.id]"
+                                    ng-options="person.name for person in home.peopleNotInEvent(event)"
+                                    name="new-user">
+                            </select>
+                            <button type="button" class="btn btn-sm btn-primary"
+                                    ng-click="home.invitePerson(event)">+</button>
+                        </span>
+                    </div>
+                    <div class="card-block">
+                        <div ng-repeat="(key, value) in event.responseCounts">
+                            <h4 class="text-capitalize text-muted">
+                                 {{key}} ({{value || 0}} people)
+                            </h4>
+                            <div class="list-group">
+                                <div class="list-group-item" ng-repeat="person in event.invitations | filter:{response:key}:true">
+                                    <span>{{person.name}}</span>
+                                    <span class="pull-right">
+                                        <a ng-click="home.updateResponse(event, person, 'yes')" aria-label="Yes">
+                                            <i class="fa fa-check"></i>
+                                        </a>
+                                        <a ng-click="home.updateResponse(event, person, 'maybe')" aria-label="Maybe">
+                                            <i class="fa fa-question"></i>
+                                        </a>
+                                        <a ng-click="home.updateResponse(event, person, 'no')" aria-label="No">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -74,12 +75,7 @@
             </div>
         </div>
     </div>
-</div>
--->
-<div ng-if="home.authenticated">
-
-    <main-view></main-view>
-</div>
+    -->
 </body>
 
 </html>

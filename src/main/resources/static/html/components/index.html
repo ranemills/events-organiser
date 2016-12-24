@@ -1,0 +1,13 @@
+<navbar></navbar>
+
+<div ng-if="indexCtrl.authenticated">
+
+    <div ng-if="indexCtrl.isOnView('list')">
+        <main-view></main-view>
+    </div>
+
+    <div ng-if="indexCtrl.isOnView('add')">
+        <add-event></add-event>
+    </div>
+
+</div>

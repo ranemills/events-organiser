@@ -1,9 +1,5 @@
-<div class="container-fluid text-xs-center" ng-if="$ctrl.view === 'list'">
+<div class="container-fluid text-xs-center">
     <div class="card-deck card-deck-wrapper">
-        <event-card ng-repeat="event in $ctrl.events" event="event">
+        <event-card ng-repeat="event in mainViewCtrl.events" event="event">
     </div>
-</div>
-
-<div class="container-fluid text-xs-center" ng-if="$ctrl.view === 'add'">
-    <add-event></add-event>
 </div>

@@ -7,7 +7,7 @@ angular.module("app", ['angularMoment'])
   let authenticate = function() {
     return $http.get("/api/user").then(function (response) {
       user = _.get(response.data, 'userAuthentication.details.name', null);
-      authenticated = self.user !== null;
+      authenticated = !_.isUndefined(user) && !_.isNull(user);
     }, function () {
       user = "N/A";
       authenticated = false;
@@ -39,14 +39,45 @@ angular.module("app", ['angularMoment'])
 {
   AuthenticationService.authenticate();
 })
-  .controller("home", function ($scope, AuthenticationService) {
+  .controller('home', function ($scope, AuthenticationService) {
     let self = this;
     self.authenticated = false;
 
     $scope.$watch(AuthenticationService.isAuthenticated, () => self.authenticated = AuthenticationService.isAuthenticated());
+
+    self.view = 'list';
+
+    self.newEvent = function() {
+      self.view = 'add';
+    }
   })
-.component('navBar', {
-  templateUrl: 'html/components/nav-bar.html',
+.component('index', {
+  controllerAs: 'indexCtrl',
+  templateUrl: 'html/components/index.html',
+  controller:  function ($scope, AuthenticationService) {
+    let self = this;
+    self.authenticated = false;
+
+    const DEFAULT_VIEW = 'list';
+
+    $scope.$watch(AuthenticationService.isAuthenticated,
+                  (newValue) => self.authenticated = newValue);
+
+    self.goToView = (key) => self.view = key;
+    self.isOnView = (key) => key === self.view;
+    self.goToHome = () => self.goToView(DEFAULT_VIEW);
+
+    self.$onInit = function() {
+      self.view = DEFAULT_VIEW;
+    };
+  }
+})
+.component('navbar', {
+  require: {
+    'navigation': '^index'
+  },
+  templateUrl: 'html/components/navbar.html',
+  controllerAs: 'navbarCtrl',
   controller: function($scope, AuthenticationService) {
     let self = this;
     self.user = null;
@@ -57,10 +88,14 @@ angular.module("app", ['angularMoment'])
       self.user = AuthenticationService.getUser();
       self.authenticated = AuthenticationService.isAuthenticated();
     });
+
+    self.newEvent = () => self.navigation.goToView('add');
+    self.goHome = () => self.navigation.goToHome();
   }
 })
 .component('mainView', {
   templateUrl: 'html/components/main-view.html',
+  controllerAs: 'mainViewCtrl',
   controller: function(_, $http, $location, AuthenticationService) {
     let self = this;
 
@@ -118,12 +153,6 @@ angular.module("app", ['angularMoment'])
     self.people = [];
     self.events = [];
     self.newEventName = '';
-
-    self.view = 'list';
-
-    self.newEvent = function() {
-      self.view = 'add';
-    }
   }
 })
   .component('eventCard', {
