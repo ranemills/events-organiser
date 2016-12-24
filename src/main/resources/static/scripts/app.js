@@ -14,15 +14,30 @@ angular.module("app", ['angularMoment'])
     });
   };
 
+  let logout = function () {
+    $http.post('/logout', {}).success(function () {
+      authenticated = false;
+      $location.path("/");
+    }).error(function (data) {
+      console.log("Logout failed");
+      authenticated = false;
+    });
+  };
+
   let getUser = () => user;
   let isAuthenticated = () => authenticated;
 
   return {
     authenticate,
+    logout,
     getUser,
     isAuthenticated
   }
 
+})
+.run((AuthenticationService) =>
+{
+  AuthenticationService.authenticate();
 })
   .controller("home", function ($scope, AuthenticationService) {
     let self = this;
@@ -32,20 +47,16 @@ angular.module("app", ['angularMoment'])
   })
 .component('navBar', {
   templateUrl: 'html/components/nav-bar.html',
-  controller: function(AuthenticationService) {
+  controller: function($scope, AuthenticationService) {
     let self = this;
-    self.authenticated = false;
     self.user = null;
+    self.authenticated = false;
+    self.logout = AuthenticationService.logout;
 
-    self.$onInit = function() {
-      AuthenticationService.authenticate().then(
-        () => {
-          console.log(AuthenticationService.getUser());
-          self.user = AuthenticationService.getUser();
-          self.authenticated = AuthenticationService.isAuthenticated()
-        }
-      )
-    }
+    $scope.$watch(AuthenticationService.isAuthenticated, function() {
+      self.user = AuthenticationService.getUser();
+      self.authenticated = AuthenticationService.isAuthenticated();
+    });
   }
 })
 .component('mainView', {
@@ -53,28 +64,13 @@ angular.module("app", ['angularMoment'])
   controller: function(_, $http, $location, AuthenticationService) {
     let self = this;
 
-    if(AuthenticationService.authenticate()) {
-      if (AuthenticationService.isAuthenticated()) {
-        console.log('authenticated');
-        $http.get('/api/events').then(function (response) {
-          self.events = response.data;
-          _.each(self.events, setResponseCounts);
-        });
-        $http.get('/api/people').then(function (response) {
-          self.people = response.data;
-        });
-      }
-    };
-
-    self.logout = function () {
-      $http.post('/logout', {}).success(function () {
-        self.authenticated = false;
-        $location.path("/");
-      }).error(function (data) {
-        console.log("Logout failed");
-        self.authenticated = false;
-      });
-    };
+    $http.get('/api/events').then(function (response) {
+      self.events = response.data;
+      _.each(self.events, setResponseCounts);
+    });
+    $http.get('/api/people').then(function (response) {
+      self.people = response.data;
+    });
 
     self.peopleNotInEvent = function (event) {
       let personNames = _.map(event.invitations, 'name');
