@@ -56,6 +56,12 @@ public class EventsController {
         return EventEntity.fromEvent(event);
     }
 
+    @RequestMapping(value = "/{eventId}", method = RequestMethod.DELETE)
+    public void deleteEvent(@PathVariable("eventId") Long eventId) {
+        Event event = eventRepository.findOne(eventId);
+        eventRepository.delete(event);
+    }
+
     @RequestMapping(value = "/{eventId}/{personId}", method = RequestMethod.PUT)
     public InvitationResponseEntity updateResponse(@PathVariable("eventId") Long eventId,
                                  @PathVariable("personId") Long personId,
