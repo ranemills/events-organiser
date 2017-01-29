@@ -2,6 +2,8 @@ package com.mills.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.mills.EventsApplication;
 import com.mills.EventsNeo4jTestConfiguration;
 import com.mills.repositories.EventRepository;
@@ -26,6 +28,8 @@ import org.springframework.web.context.WebApplicationContext;
 @WithMockUser
 public abstract class AbstractControllerTest {
 
+    private static final ObjectMapper mapper = new ObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).registerModule(new JodaModule());;
+
     @Autowired
     protected WebApplicationContext _webApplicationContext;
 
@@ -41,7 +45,6 @@ public abstract class AbstractControllerTest {
     static String asJson(Object object)
         throws JsonProcessingException
     {
-        ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(object);
     }
 
