@@ -91,15 +91,13 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>static/node_modules/**/*</exclude>
-                    <exclude>static/bower_components/**/*</exclude>
-                    <exclude>static/third-party/**/*</exclude>
-                    <exclude>static/node/**/*</exclude>
-                    <exclude>static/scripts/**/*</exclude>
-                    <exclude>static/.idea/**/*</exclude>
-                    <exclude>static/.idea/*</exclude>
-                </excludes>
+                <includes>
+                    <include>application*.yml</include>
+                    <include>static/css/*</include>
+                    <include>static/dist/*</include>
+                    <include>static/html/**</include>
+                    <include>static/index.html</include>
+                </includes>
             </resource>
         </resources>
 
@@ -113,8 +111,8 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.0</version>
                 <configuration>
-                    <nodeVersion>v0.10.18</nodeVersion>
-                    <npmVersion>1.3.8</npmVersion>
+                    <nodeVersion>v7.4.0</nodeVersion>
+                    <npmVersion>4.1.2</npmVersion>
                     <workingDirectory>src/main/resources/static</workingDirectory>
                 </configuration>
                 <executions>
