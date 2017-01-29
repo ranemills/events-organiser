@@ -80,9 +80,29 @@
             <version>2.4.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>static/node_modules/**/*</exclude>
+                    <exclude>static/bower_components/**/*</exclude>
+                    <exclude>static/third-party/**/*</exclude>
+                    <exclude>static/node/**/*</exclude>
+                    <exclude>static/scripts/**/*</exclude>
+                    <exclude>static/.idea/**/*</exclude>
+                    <exclude>static/.idea/*</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
